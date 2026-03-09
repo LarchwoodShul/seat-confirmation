@@ -11,15 +11,13 @@
         .step{ display:none; }
         .step.active{ display:block; }
         
-        /* Table Styles */
         table{ width:100%; border-collapse:collapse; margin:20px 0; font-size: 14px; }
         th,td{ border:1px solid #dfe6e9; padding:10px; text-align: left; }
         th { background: #f8f9fa; }
         input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
         
-        /* Left Alignment for Radios and Checkboxes */
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
-        .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; }
+        .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; font-size: 14px; }
         input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
 
         button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
@@ -28,7 +26,14 @@
         .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
         canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
         
-        @media print { .no-print { display: none; } }
+        #finalSignatureImg { border-bottom: 1px solid #333; max-width: 250px; display: block; margin-top: 10px; }
+        .agreement-record { font-style: italic; font-size: 13px; color: #555; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+
+        @media print { 
+            .no-print { display: none; } 
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -42,7 +47,7 @@
             <tbody></tbody>
         </table>
         <div class="summary-box">
-            <p>Total: $<span id="total">0</span> | 25% Deposit: $<span id="deposit">0</span></p>
+            <p>Total: $<span id="total">0</span> | 25% Deposit Due: $<span id="deposit">0</span></p>
         </div>
         <button onclick="nextStep(2)">Continue to Payment</button>
     </div>
@@ -56,50 +61,57 @@
                 <li>Deposit deadline (14 days)</li>
             </ul>
         </div>
-
         <div class="left-align-group">
             <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label>
             <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label>
             <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label>
             <label><input type="radio" name="payment" value="Other"> Other</label>
         </div>
-
         <label>Credit Card Number</label>
         <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
         <label>Expiration (MM/YY)</label>
         <input type="text" id="ccExp" placeholder="MM/YY">
-
         <label>Additional Payment Instructions</label>
-        <textarea id="notes" rows="3"></textarea>
-        
+        <textarea id="notes" rows="2"></textarea>
         <button onclick="nextStep(3)">Continue to Agreement</button>
     </div>
 
     <div id="step3" class="step">
         <h2>3. Final Agreement</h2>
         <p><a href="YOUR_PDF_LINK" target="_blank">📄 View Seating Agreement (PDF)</a></p>
-        
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
         </div>
-        
         <p><strong>Signature:</strong></p>
         <canvas id="signaturePad"></canvas>
         <button type="button" style="background:#6c757d; width:auto; padding:5px 10px; margin-top:5px;" onclick="clearSig()">Clear</button>
-
         <button id="submitBtn" onclick="submitForm()">Submit Confirmation</button>
     </div>
 
     <div id="successPage" class="step">
-        <h2 style="color: #28a745;">✔ Submission Successful!</h2>
+        <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
         <div id="printArea">
-            <p><strong>Member:</strong> <span id="resMember"></span></p>
-            <p><strong>Date:</strong> <span id="resDate"></span></p>
+            <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
+                <h3>Permanent Seating Confirmation Record</h3>
+                <p><strong>Date:</strong> <span id="resDate"></span></p>
+            </div>
+            <p><strong>Member Name:</strong> <span id="resMember"></span></p>
             <p><strong>Payment Plan:</strong> <span id="resPlan"></span></p>
-            <div id="resDetails" style="border-top: 1px solid #eee; margin-top:10px; padding-top:10px;"></div>
+            <p><strong>Total Amount:</strong> $<span id="resTotal"></span></p>
+            
+            <h4>Seating Details:</h4>
+            <div id="resDetails" style="margin-bottom: 20px;"></div>
+
+            <h4>Agreement & Signature:</h4>
+            <div class="agreement-record">
+                <p>☑ I have read and agree to the Permanent Seating Agreement.</p>
+                <p>☑ I understand that seat locations will be finalized after confirmations and deposits are received.</p>
+            </div>
+            <p><strong>Digitally Signed:</strong></p>
+            <img id="finalSignatureImg" src="" alt="User Signature">
         </div>
-        <button class="no-print" onclick="window.print()" style="background:#28a745;">Print Summary</button>
+        <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
     </div>
 </div>
 
@@ -133,7 +145,10 @@
             document.getElementById("successPage").classList.add("active");
         } else {
             document.getElementById("step"+n).classList.add("active");
-            if(n === 3) { const c = document.getElementById("signaturePad"); c.width = c.offsetWidth; c.height = c.offsetHeight; }
+            if(n === 3) { 
+                const c = document.getElementById("signaturePad"); 
+                c.width = c.offsetWidth; c.height = c.offsetHeight; 
+            }
         }
     }
 
@@ -159,6 +174,7 @@
         btn.disabled = true;
         btn.innerText = "Processing...";
 
+        const sigData = canvas.toDataURL(); // Capture signature
         const finalSeats = [];
         document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
             finalSeats.push({
@@ -178,18 +194,20 @@
             cardNumber: document.getElementById("ccNum").value,
             cardExpiry: document.getElementById("ccExp").value,
             notes: document.getElementById("notes").value,
-            termsAccepted: true, // They can only submit if true
+            signature: sigData,
             submissionId: Date.now()
         };
 
         try {
             await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
             
-            // Populate Success Page
+            // Populate Success Page for Printing
             document.getElementById("resMember").innerText = payload.member;
             document.getElementById("resDate").innerText = new Date().toLocaleString();
             document.getElementById("resPlan").innerText = payload.paymentPlan;
-            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            document.getElementById("resTotal").innerText = totalVal.toFixed(2);
+            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            document.getElementById("finalSignatureImg").src = sigData;
             
             nextStep("success");
         } catch (e) {
