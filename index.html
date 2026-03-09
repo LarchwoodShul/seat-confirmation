@@ -1,243 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<meta charset="UTF-8">
-<title>Seat Confirmation</title>
-
-<style>
-
-body{
-font-family:Arial;
-padding:40px;
-background:#f4f4f4;
-}
-
-.container{
-background:white;
-padding:30px;
-border-radius:8px;
-max-width:800px;
-margin:auto;
-}
-
-input,textarea{
-width:100%;
-padding:10px;
-margin-bottom:15px;
-}
-
-button{
-padding:12px 20px;
-font-size:16px;
-cursor:pointer;
-}
-
-canvas{
-border:1px solid black;
-width:100%;
-height:200px;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Permanent Seating Confirmation</title>
+    <style>
+        body{ font-family: 'Segoe UI', Arial, sans-serif; background:#f4f7f6; padding:20px; color: #333; }
+        .container{ max-width:750px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        h2{ margin-top:0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .step{ display:none; }
+        .step.active{ display:block; }
+        table{ width:100%; border-collapse:collapse; margin:20px 0; font-size: 14px; }
+        th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
+        th { background: #f8f9fa; }
+        input[type=text], input[type=number], textarea{ width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; }
+        button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; transition: background 0.2s; }
+        button:hover{ background: #0056b3; }
+        .summary{ background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top:20px; border-left: 5px solid #007bff; }
+        .summary p { margin: 5px 0; font-weight: bold; }
+        .radio-group{ margin:20px 0; line-height: 2; }
+        .terms-box{ border:1px solid #eee; height:180px; overflow-y:scroll; padding:15px; margin:15px 0; background: #fff; font-size: 13px; line-height: 1.6; }
+        canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
+        .clear-btn { background: #6c757d; margin-top: 10px; padding: 8px; width: auto; font-size: 13px; }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <div id="step1" class="step active">
+        <h2>1. Review Seating</h2>
+        <p><strong>Member:</strong> <span id="memberName">Loading...</span></p>
+        <p><strong>Offer:</strong> <span id="offerType">Loading...</span></p>
 
-<h2>Seat Confirmation</h2>
+        <table id="seatTable">
+            <thead>
+                <tr>
+                    <th>Section</th>
+                    <th>Occupant Name</th>
+                    <th>Age</th>
+                    <th>Row</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
 
-<label>Member</label>
-<input id="member">
+        <div class="summary">
+            <p>Total: $<span id="total">0</span></p>
+            <p>25% Deposit: $<span id="deposit">0</span></p>
+            <p>Balance: $<span id="balance">0</span></p>
+        </div>
+        <button onclick="nextStep(2)">Continue to Payment Options</button>
+    </div>
 
-<label>Offer</label>
-<input id="offer">
+    <div id="step2" class="step">
+        <h2>2. Payment Plan</h2>
+        <div class="radio-group">
+            <label><input type="radio" name="payment" value="Full"> Pay in Full</label><br>
+            <label><input type="radio" name="payment" value="Monthly"> Monthly Installments (24 months)</label><br>
+            <label><input type="radio" name="payment" value="Quarterly"> Quarterly Installments</label><br>
+            <label><input type="radio" name="payment" value="Other"> Other</label>
+        </div>
+        <label>Additional Instructions:</label>
+        <textarea id="notes" rows="3" placeholder="Any special requests..."></textarea>
+        <button onclick="nextStep(3)">Continue to Agreement</button>
+    </div>
 
-<label>Name</label>
-<input id="name">
+    <div id="step3" class="step">
+        <h2>3. Final Confirmation</h2>
+        <div class="terms-box">
+            <p><strong>Terms and Conditions:</strong><br>
+            1. All deposits are non-refundable.<br>
+            2. Final seating is subject to availability and club confirmation.<br>
+            3. Balance must be cleared within the agreed payment window.</p>
+        </div>
+        
+        <label><input type="checkbox" id="agree1"> I agree to the Terms & Conditions</label><br><br>
+        <label><input type="checkbox" id="agree2"> I understand seat locations are finalized after deposit</label>
+        
+        <p style="margin-top:20px; margin-bottom:5px;">Digital Signature:</p>
+        <canvas id="signaturePad"></canvas>
+        <button type="button" class="clear-btn" onclick="clearSignature()">Clear Signature</button>
 
-<label>Age</label>
-<input id="age">
-
-<label>Section</label>
-<input id="section">
-
-<label>Row</label>
-<input id="row">
-
-<label>Price</label>
-<input id="price">
-
-<label>Total</label>
-<input id="total">
-
-<label>Deposit</label>
-<input id="deposit">
-
-<label>Balance</label>
-<input id="balance">
-
-<label>Payment Plan</label>
-<input id="paymentPlan">
-
-<label>Notes</label>
-<textarea id="notes"></textarea>
-
-<h3>Signature</h3>
-
-<canvas id="signature"></canvas>
-
-<br><br>
-
-<button onclick="clearSignature()">Clear Signature</button>
-
-<br><br>
-
-<button onclick="submitForm()">Submit</button>
-
+        <p>Date: <span id="dateDisplay"></span></p>
+        <button id="submitBtn" onclick="submitForm()">Submit Confirmation</button>
+    </div>
 </div>
 
 <script>
+    // PASTE YOUR GOOGLE WEB APP URL HERE
+    const SCRIPT_URL = "INSERT_YOUR_DEPLOYMENT_URL_HERE";
 
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbypXjnD3QWc2S0KPIOt9BYbyfesWFIVnGiGxawznpllKWEPanWm6Wv2KSdPdfTZ0E0CDw/exec";
+    let seats = [];
+    let totalAmount = 0;
 
-const canvas=document.getElementById("signature");
-const ctx=canvas.getContext("2d");
+    function loadData() {
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById("memberName").innerText = params.get("member") || "N/A";
+        document.getElementById("offerType").innerText = params.get("offer") || "N/A";
+        
+        const seatString = params.get("seats"); // Format: Sec|Name|Age|Row|Price
+        if (!seatString) return;
 
-canvas.width=canvas.offsetWidth;
-canvas.height=200;
+        seatString.split(",").forEach(s => {
+            const [section, name, age, row, price] = s.split("|");
+            const p = parseFloat(price) || 0;
+            seats.push({ section, name, age, row, price: p });
+            totalAmount += p;
 
-let drawing=false;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${section}</td>
+                <td><input class="seatName" value="${name}"></td>
+                <td><input class="seatAge" type="number" value="${age}"></td>
+                <td>${row}</td>
+                <td>$${p}</td>
+            `;
+            document.querySelector("#seatTable tbody").appendChild(tr);
+        });
 
-canvas.addEventListener("mousedown",start);
-canvas.addEventListener("mouseup",stop);
-canvas.addEventListener("mousemove",draw);
+        updateTotals();
+        document.getElementById("dateDisplay").innerText = new Date().toLocaleDateString();
+    }
 
-canvas.addEventListener("touchstart",start);
-canvas.addEventListener("touchend",stop);
-canvas.addEventListener("touchmove",draw);
+    function updateTotals() {
+        const dep = (totalAmount * 0.25).toFixed(2);
+        const bal = (totalAmount - dep).toFixed(2);
+        document.getElementById("total").innerText = totalAmount.toFixed(2);
+        document.getElementById("deposit").innerText = dep;
+        document.getElementById("balance").innerText = bal;
+    }
 
-function getPosition(e){
+    function nextStep(step) {
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step" + step).classList.add("active");
+        if(step === 3) resizeCanvas();
+    }
 
-const rect=canvas.getBoundingClientRect();
+    /* Signature Logic */
+    const canvas = document.getElementById("signaturePad");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
 
-if(e.touches){
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
 
-return{
-x:e.touches[0].clientX-rect.left,
-y:e.touches[0].clientY-rect.top
-}
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.touches ? e.touches[0].clientX : e.clientX) - rect.left,
+            y: (e.touches ? e.touches[0].clientY : e.clientY) - rect.top
+        };
+    }
 
-}else{
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("touchstart", start);
+    window.addEventListener("mouseup", stop);
+    window.addEventListener("touchend", stop);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchmove", draw);
 
-return{
-x:e.clientX-rect.left,
-y:e.clientY-rect.top
-}
+    function start(e) { drawing = true; draw(e); }
+    function stop() { drawing = false; ctx.beginPath(); }
+    function draw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
 
-}
+    function clearSignature() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-}
+    async function submitForm() {
+        const payOption = document.querySelector('input[name="payment"]:checked');
+        if (!payOption) return alert("Please select a payment option");
+        if (!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) 
+            return alert("Please accept the terms");
 
-function start(e){
+        const btn = document.getElementById("submitBtn");
+        btn.innerText = "Sending... Please wait";
+        btn.disabled = true;
 
-drawing=true;
+        const updatedSeats = [];
+        document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
+            updatedSeats.push({
+                section: seats[i].section,
+                name: row.querySelector(".seatName").value,
+                age: row.querySelector(".seatAge").value,
+                row: seats[i].row,
+                price: seats[i].price
+            });
+        });
 
-const pos=getPosition(e);
+        const payload = {
+            submissionId: Date.now(),
+            member: document.getElementById("memberName").innerText,
+            offer: document.getElementById("offerType").innerText,
+            seats: updatedSeats,
+            total: totalAmount,
+            paymentPlan: payOption.value,
+            notes: document.getElementById("notes").value,
+            signature: canvas.toDataURL("image/png")
+        };
 
-ctx.beginPath();
-ctx.moveTo(pos.x,pos.y);
+        try {
+            // Using 'text/plain' and 'no-cors' to avoid preflight issues with Google
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", 
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify(payload)
+            });
+            
+            alert("Success! Your confirmation has been sent.");
+            window.location.reload();
+        } catch (err) {
+            alert("Submission failed. Please check your internet or script URL.");
+            btn.disabled = false;
+            btn.innerText = "Submit Confirmation";
+        }
+    }
 
-}
-
-function draw(e){
-
-if(!drawing) return;
-
-e.preventDefault();
-
-const pos=getPosition(e);
-
-ctx.lineWidth=2;
-ctx.lineCap="round";
-
-ctx.lineTo(pos.x,pos.y);
-ctx.stroke();
-
-}
-
-function stop(){
-
-drawing=false;
-
-}
-
-function clearSignature(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-}
-
-async function submitForm(){
-
-const signature=canvas.toDataURL();
-
-const payload={
-
-submissionId:Date.now(),
-
-member:document.getElementById("member").value,
-
-offer:document.getElementById("offer").value,
-
-total:document.getElementById("total").value,
-
-deposit:document.getElementById("deposit").value,
-
-balance:document.getElementById("balance").value,
-
-paymentPlan:document.getElementById("paymentPlan").value,
-
-notes:document.getElementById("notes").value,
-
-signature:signature,
-
-date:new Date(),
-
-seats:[
-{
-section:document.getElementById("section").value,
-name:document.getElementById("name").value,
-age:document.getElementById("age").value,
-row:document.getElementById("row").value,
-price:document.getElementById("price").value
-}
-]
-
-};
-
-try{
-
-const res=await fetch(SCRIPT_URL,{
-method:"POST",
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify(payload)
-});
-
-const text=await res.text();
-
-alert(text);
-
-}catch(err){
-
-alert("Error: "+err);
-
-}
-
-}
-
+    loadData();
 </script>
 
 </body>
