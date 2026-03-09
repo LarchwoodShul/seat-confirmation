@@ -9,7 +9,7 @@
         .container{ max-width:750px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
         h2{ margin-top:0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         h3.section-title { margin-top: 30px; color: #2c3e50; border-left: 4px solid #007bff; padding-left: 10px; font-size: 18px; }
-        h3.denied-title { border-left-color: #dc3545; }
+        h3.deferred-title { border-left-color: #dc3545; }
         .step{ display:none; }
         .step.active{ display:block; }
         
@@ -65,18 +65,68 @@
             <span class="summary-value deposit-value">$<span id="deposit">0</span></span>
         </div>
 
-        <div id="deniedSection" style="display:none;">
-            <h3 class="section-title denied-title">Unassigned/Denied Requests</h3>
-            <p style="font-size: 13px; color: #666;">The following requested seats could not be assigned at this time:</p>
+        <div id="deferredSection" style="display:none;">
+            <h3 class="section-title deferred-title">Deferred Requests</h3>
+            <p style="font-size: 13px; color: #666;">The following requested seats have been deferred at this time:</p>
             <div class="table-responsive">
-                <table id="deniedTable">
+                <table id="deferredTable">
                     <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
         </div>
         
-        <button onclick="nextStep(2)">Continue to Payment Options</button>
+        <button type="button" onclick="nextStep(2)">Continue to Payment Options</button>
+    </div>
+
+    <div id="step2" class="step">
+        <h2>2. Payment Plan</h2>
+        <div class="summary-box" style="font-size: 14px;">
+            <ul style="margin:0; padding-left:20px; line-height: 1.6;">
+                <li>25% deposit required</li>
+                <li>Balance due within 24 months</li>
+                <li>Deposit deadline (14 days)</li>
+            </ul>
+        </div>
+        <div class="left-align-group">
+            <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label>
+            <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label>
+            <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label>
+            <label><input type="radio" name="payment" value="Other"> Other</label>
+        </div>
+        <label>Credit Card Number</label>
+        <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
+        <label>Expiration (MM/YY)</label>
+        <input type="text" id="ccExp" placeholder="MM/YY">
+        <label>Additional Payment Instructions</label>
+        <textarea id="notes" rows="2"></textarea>
+        
+        <div class="btn-group">
+            <button type="button" class="back-btn" onclick="prevStep(1)">Back</button>
+            <button type="button" class="next-btn" onclick="nextStep(3)">Continue to Agreement</button>
+        </div>
+    </div>
+
+    <div id="step3" class="step">
+        <h2>3. Final Agreement</h2>
+        <div class="terms-text-box">
+            <h3>LARCHWOOD SHUL</h3>
+            <p style="text-align: center; font-weight: bold;">Permanent Seating Agreement</p>
+            <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary...</p>
+            </div>
+
+        <div class="left-align-group">
+            <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
+            <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
+        </div>
+        <p><strong>Digital Signature:</strong></p>
+        <canvas id="signaturePad"></canvas>
+        <button type="button" id="clearBtn" style="background:#6c757d; width:auto; padding:8px 15px; margin-top:5px;" onclick="clearSig()">Clear Signature</button>
+
+        <div class="btn-group">
+            <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
+            <button type="button" id="submitBtn" class="next-btn" onclick="submitForm()">Submit Confirmation</button>
+        </div>
     </div>
 
     <div id="successPage" class="step">
@@ -93,9 +143,9 @@
             <h4>Approved Seating Details:</h4>
             <div id="resDetails" style="margin-bottom: 20px;"></div>
 
-            <div id="resDeniedArea" style="display:none;">
-                <h4>Unassigned/Denied Requests:</h4>
-                <div id="resDeniedDetails" style="margin-bottom: 20px; color: #666;"></div>
+            <div id="resDeferredArea" style="display:none;">
+                <h4>Deferred Requests:</h4>
+                <div id="resDeferredDetails" style="margin-bottom: 20px; color: #666;"></div>
             </div>
             
             <img id="finalSignatureImg" src="" alt="Signature">
@@ -107,7 +157,7 @@
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
     let baseSeats = [];
-    let deniedSeats = [];
+    let deferredSeats = [];
     let totalVal = 0;
 
     function loadData() {
@@ -127,17 +177,16 @@
         const seatStr = params.get("seats");
         if(seatStr){
             seatStr.split(",").forEach(s => {
-                // Format: Code|Name|Age|Status
                 const [code, name, age, status] = s.split("|");
                 const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
                 const decodedName = decodeURIComponent(name);
 
-                if (status === "Denied") {
-                    deniedSeats.push({ section: details.section, name: decodedName, age: age, row: details.row });
-                    document.getElementById("deniedSection").style.display = "block";
+                if (status === "DEFERRED") {
+                    deferredSeats.push({ section: details.section, name: decodedName, age: age, row: details.row });
+                    document.getElementById("deferredSection").style.display = "block";
                     const tr = document.createElement("tr");
                     tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td>`;
-                    document.querySelector("#deniedTable tbody").appendChild(tr);
+                    document.querySelector("#deferredTable tbody").appendChild(tr);
                 } else {
                     const p = parseFloat(details.price) || 0;
                     baseSeats.push({ section: details.section, name: decodedName, age: age, row: details.row, price: p });
@@ -152,23 +201,99 @@
         document.getElementById("deposit").innerText = (totalVal * 0.25).toLocaleString();
     }
 
-    // Logic for submitForm needs to handle result display
-    async function submitForm() {
-        // ... (validation and signature logic same as before)
-        
-        // Populate Success Page Result
-        document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
-        
-        if (deniedSeats.length > 0) {
-            document.getElementById("resDeniedArea").style.display = "block";
-            document.getElementById("resDeniedDetails").innerHTML = deniedSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
-        }
-        
-        // ... (fetch call same as before)
+    function nextStep(n){
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step"+n).classList.add("active");
+        if(n === 3) resizeCanvas();
+        window.scrollTo(0,0);
     }
 
+    function prevStep(n){
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step"+n).classList.add("active");
+        window.scrollTo(0,0);
+    }
+
+    const canvas = document.getElementById("signaturePad");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+    }
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("touchstart", startDrawing);
+    window.addEventListener("mouseup", stopDrawing);
+    window.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchmove", draw);
+
+    function startDrawing(e) { drawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); }
+    function stopDrawing() { drawing = false; ctx.closePath(); }
+    function draw(e) { if (!drawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
+    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+
+    async function submitForm() {
+        const payOption = document.querySelector('input[name="payment"]:checked');
+        if(!payOption) return alert("Please select a payment plan.");
+        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
+        
+        const btn = document.getElementById("submitBtn");
+        const backBtn = document.getElementById("lastBackBtn");
+        
+        btn.disabled = true;
+        backBtn.disabled = true;
+        btn.innerText = "Processing...";
+
+        const tempCanvas = document.createElement("canvas");
+        tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext("2d");
+        tempCtx.fillStyle = "#ffffff"; tempCtx.fillRect(0,0,tempCanvas.width,tempCanvas.height);
+        tempCtx.drawImage(canvas,0,0);
+        const sigData = tempCanvas.toDataURL("image/jpeg", 0.5);
+
+        const finalSeats = [];
+        document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
+            finalSeats.push({ section: baseSeats[i].section, name: row.querySelector(".sn").value, age: row.querySelector(".sa").value, row: baseSeats[i].row, price: baseSeats[i].price });
+        });
+
+        const payload = { member: document.getElementById("memberName").innerText, seats: finalSeats, total: totalVal, paymentPlan: payOption.value, cardNumber: document.getElementById("ccNum").value, cardExpiry: document.getElementById("ccExp").value, notes: document.getElementById("notes").value, signature: sigData, submissionId: Date.now() };
+
+        try {
+            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
+            
+            document.getElementById("resMember").innerText = payload.member;
+            document.getElementById("resDate").innerText = new Date().toLocaleString();
+            document.getElementById("resPlan").innerText = payload.paymentPlan;
+            document.getElementById("resTotal").innerText = totalVal.toLocaleString();
+            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            
+            if (deferredSeats.length > 0) {
+                document.getElementById("resDeferredArea").style.display = "block";
+                document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            }
+            
+            document.getElementById("finalSignatureImg").src = sigData;
+            nextStep("success");
+        } catch (e) {
+            alert("Error sending data.");
+            btn.disabled = false;
+            backBtn.disabled = false;
+        }
+    }
     loadData();
-    // (Other helper functions like nextStep, prevStep, resizeCanvas remain unchanged)
 </script>
 </body>
 </html>
