@@ -1,29 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Permanent Seating Confirmation</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#f4f4f4;
+background:#f2f2f2;
 padding:20px;
 }
 
 .container{
-max-width:700px;
+max-width:750px;
 margin:auto;
 background:white;
 padding:25px;
 border-radius:10px;
-box-shadow:0 2px 10px rgba(0,0,0,.1);
+box-shadow:0 3px 12px rgba(0,0,0,.1);
 }
 
 h2{
 margin-top:0;
+}
+
+.step{
+display:none;
+}
+
+.step.active{
+display:block;
 }
 
 table{
@@ -35,16 +45,20 @@ margin-top:15px;
 th,td{
 border:1px solid #ddd;
 padding:8px;
-text-align:left;
 }
 
-.summary{
-margin-top:20px;
-font-size:18px;
+input[type=text],
+input[type=number],
+textarea{
+width:100%;
+padding:10px;
+border:1px solid #ccc;
+border-radius:4px;
+margin-top:4px;
 }
 
 button{
-margin-top:25px;
+margin-top:20px;
 padding:14px;
 width:100%;
 font-size:16px;
@@ -55,28 +69,25 @@ border-radius:6px;
 cursor:pointer;
 }
 
-.step{
-display:none;
-}
-
-.step.active{
-display:block;
-}
-
-input[type=text],
-textarea{
-width:100%;
-padding:10px;
-border:1px solid #ccc;
-border-radius:4px;
-margin-top:5px;
+.summary{
+margin-top:20px;
+font-size:18px;
 }
 
 .radio-group{
 margin-top:15px;
 }
 
+.terms-box{
+border:1px solid #ccc;
+height:220px;
+overflow:auto;
+padding:10px;
+margin-top:10px;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -95,13 +106,15 @@ margin-top:15px;
 <table id="seatTable">
 
 <thead>
+
 <tr>
 <th>Section</th>
-<th>Name</th>
+<th>Seat Occupant Name</th>
 <th>Age</th>
-<th>Row</th>
+<th>Row Category</th>
 <th>Price</th>
 </tr>
+
 </thead>
 
 <tbody></tbody>
@@ -110,9 +123,9 @@ margin-top:15px;
 
 <div class="summary">
 
-<p>Total Seat Amount: $<span id="total"></span></p>
-<p>Required 25% Deposit: $<span id="deposit"></span></p>
-<p>Remaining Balance: $<span id="balance"></span></p>
+<p>Total Seat Amount: $<span id="total">0</span></p>
+<p>Required 25% Deposit: $<span id="deposit">0</span></p>
+<p>Remaining Balance: $<span id="balance">0</span></p>
 
 </div>
 
@@ -146,7 +159,8 @@ Continue to Payment Options
 
 </div>
 
-<label style="margin-top:15px;">Additional Payment Instructions</label>
+<label style="margin-top:15px">Additional Payment Instructions</label>
+
 <textarea id="notes"></textarea>
 
 <button onclick="nextStep(3)">
@@ -161,13 +175,16 @@ Continue to Terms & Agreement
 
 <h2>Permanent Seating Agreement</h2>
 
-<div style="height:200px;overflow:auto;border:1px solid #ccc;padding:10px">
+<div class="terms-box">
 
-<p>Insert full Terms & Conditions text here...</p>
+<p>
+Insert your full Permanent Seating Terms & Conditions here.
+Members must review these terms before confirming.
+</p>
 
 </div>
 
-<label style="margin-top:15px;">
+<label>
 <input type="checkbox" id="agree1">
 I have read and agree to the Permanent Seating Agreement
 </label>
@@ -179,7 +196,10 @@ I have read and agree to the Permanent Seating Agreement
 I understand seat locations will be finalized after confirmations and deposits are received
 </label>
 
-<label style="margin-top:15px;">Type Full Name (Signature)</label>
+<br><br>
+
+<label>Type Full Name (Signature)</label>
+
 <input type="text" id="signature">
 
 <p>Date: <span id="date"></span></p>
@@ -216,22 +236,24 @@ seatString.split(",").forEach(s=>{
 
 const [section,name,age,row,price]=s.split("|");
 
-seats.push({
-section,
-name,
-age,
-row,
+const seat={
+section:section,
+name:name,
+age:age,
+row:row,
 price:Number(price)
-});
+};
 
-total+=Number(price);
+seats.push(seat);
+
+total+=seat.price;
 
 const tr=document.createElement("tr");
 
 tr.innerHTML=`
 <td>${section}</td>
-<td>${name}</td>
-<td>${age}</td>
+<td><input class="seatName" value="${name}"></td>
+<td><input class="seatAge" type="number" value="${age}"></td>
 <td>${row}</td>
 <td>$${price}</td>
 `;
@@ -239,6 +261,14 @@ tr.innerHTML=`
 document.querySelector("#seatTable tbody").appendChild(tr);
 
 });
+
+updateTotals();
+
+document.getElementById("date").innerText=new Date().toLocaleDateString();
+
+}
+
+function updateTotals(){
 
 const deposit=(total*0.25).toFixed(2);
 const balance=(total-deposit).toFixed(2);
@@ -250,47 +280,80 @@ document.getElementById("balance").innerText=balance;
 document.getElementById("total2").innerText=total;
 document.getElementById("deposit2").innerText=deposit;
 
-document.getElementById("date").innerText=new Date().toLocaleDateString();
+}
+
+function nextStep(step){
+
+document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+document.getElementById("step"+step).classList.add("active");
 
 }
 
-function nextStep(n){
+function collectSeats(){
 
-document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
-document.getElementById("step"+n).classList.add("active");
+const rows=document.querySelectorAll("#seatTable tbody tr");
+
+const updatedSeats=[];
+
+rows.forEach((row,i)=>{
+
+const name=row.querySelector(".seatName").value;
+const age=row.querySelector(".seatAge").value;
+
+updatedSeats.push({
+section:seats[i].section,
+name:name,
+age:age,
+row:seats[i].row,
+price:seats[i].price
+});
+
+});
+
+return updatedSeats;
 
 }
 
 async function submitForm(){
 
 if(!document.querySelector('input[name="payment"]:checked'))
-return alert("Select payment option");
+return alert("Select a payment option");
 
 if(!agree1.checked || !agree2.checked)
-return alert("You must accept the terms");
+return alert("You must accept the agreement");
 
 if(!signature.value)
 return alert("Signature required");
 
 const payload={
+
 submissionId:crypto.randomUUID(),
 member:memberName.innerText,
 offer:offerType.innerText,
-seats,
-total,
+
+seats:collectSeats(),
+
+total:total,
 deposit:(total*0.25),
 balance:(total*0.75),
+
 paymentPlan:document.querySelector('input[name="payment"]:checked').value,
+
 notes:notes.value,
+
 signature:signature.value,
+
 date:new Date().toISOString()
+
 };
 
-await fetch(SCRIPT_URL,{
+const res=await fetch(SCRIPT_URL,{
 method:"POST",
 headers:{'Content-Type':'application/json'},
 body:JSON.stringify(payload)
 });
+
+const text=await res.text();
 
 alert("Confirmation submitted");
 
@@ -304,4 +367,3 @@ loadData();
 
 </body>
 </html>
-
