@@ -24,7 +24,7 @@
 
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         button{ padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; font-weight: bold; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
+        button:disabled { background: #ccc !important; cursor: not-allowed; }
         .back-btn { background: #6c757d; flex: 1; }
         .next-btn { flex: 2; }
         
@@ -67,11 +67,11 @@
             <span class="summary-label">25% Deposit Due:</span>
             <span class="summary-value deposit-value">$<span id="deposit">0</span></span>
         </div>
-        <button onclick="nextStep(2)">Continue to Payment</button>
+        <button onclick="nextStep(2)">Continue to Payment Options</button>
     </div>
 
     <div id="step2" class="step">
-        <h2>2. Payment Plan</h2>
+        <h2>2. Payment Plan Selection</h2>
         <div class="summary-box" style="font-size: 14px;">
             <ul style="margin:0; padding-left:20px; line-height: 1.6;">
                 <li>25% deposit required</li>
@@ -90,7 +90,7 @@
         <label>Expiration (MM/YY)</label>
         <input type="text" id="ccExp" placeholder="MM/YY">
         <label>Additional Payment Instructions</label>
-        <textarea id="notes" rows="2"></textarea>
+        <textarea id="notes" rows="2" placeholder="“Additional Payment Instructions”"></textarea>
         
         <div class="btn-group">
             <button type="button" class="back-btn" onclick="prevStep(1)">Back</button>
@@ -103,9 +103,37 @@
         <div class="terms-text-box">
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align: center; font-weight: bold;">Permanent Seating Agreement</p>
-            <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary...</p>
+            <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary.</p>
+            
             <h4>1. Seat Assignment</h4>
-            <p>The member identified in the personalized confirmation link...</p>
+            <p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein...</p>
+            
+            <h4>2. Term</h4>
+            <p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment...</p>
+            
+            <h4>3. Continued Participation</h4>
+            <p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life...</p>
+            
+            <h4>4. Payment Terms</h4>
+            <p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation...</p>
+
+            <h4>5. Annual Maintenance Fee</h4>
+            <p>Each permanent seat is subject to an annual maintenance fee of $500 per seat...</p>
+
+            <h4>6. Non-Transferability</h4>
+            <p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
+
+            <h4>7. Passing of a Seat Holder</h4>
+            <p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue...</p>
+
+            <h4>8. Future Improvements and Assessments</h4>
+            <p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary...</p>
+
+            <h4>9. High Holiday Seating</h4>
+            <p>Permanent seat holders will have priority use of their assigned seats during the High Holidays...</p>
+
+            <h4>10. Governance</h4>
+            <p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
         </div>
 
         <div class="left-align-group">
@@ -114,10 +142,10 @@
         </div>
         <p><strong>Digital Signature:</strong></p>
         <canvas id="signaturePad"></canvas>
-        <button type="button" style="background:#6c757d; width:auto; padding:8px 15px; margin-top:5px;" onclick="clearSig()">Clear Signature</button>
+        <button type="button" id="clearBtn" style="background:#6c757d; width:auto; padding:8px 15px; margin-top:5px;" onclick="clearSig()">Clear Signature</button>
 
         <div class="btn-group">
-            <button type="button" class="back-btn no-print" onclick="prevStep(2)">Back</button>
+            <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
             <button type="button" id="submitBtn" class="next-btn" onclick="submitForm()">Submit Confirmation</button>
         </div>
     </div>
@@ -133,6 +161,12 @@
             <p><strong>Payment Plan:</strong> <span id="resPlan"></span></p>
             <p><strong>Total Amount:</strong> $<span id="resTotal"></span></p>
             <div id="resDetails" style="margin-bottom: 20px;"></div>
+            
+            <div class="agreement-record">
+                <p>☑ I have read and agree to the Permanent Seating Agreement.</p>
+                <p>☑ I understand that seat locations will be finalized after confirmations and deposits are received.</p>
+            </div>
+            <p style="margin-top: 20px;"><strong>Digitally Signed:</strong></p>
             <img id="finalSignatureImg" src="" alt="Signature">
         </div>
         <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
@@ -178,8 +212,12 @@
 
     function nextStep(n){
         document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-        document.getElementById("step"+n).classList.add("active");
-        if(n === 3) resizeCanvas();
+        if (n === 'success') {
+            document.getElementById("successPage").classList.add("active");
+        } else {
+            document.getElementById("step"+n).classList.add("active");
+            if(n === 3) resizeCanvas();
+        }
         window.scrollTo(0,0);
     }
 
@@ -221,36 +259,53 @@
     function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     async function submitForm() {
-        // ... (existing submit logic remains the same)
         const payOption = document.querySelector('input[name="payment"]:checked');
         if(!payOption) return alert("Please select a payment plan.");
         if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
+        
         const btn = document.getElementById("submitBtn");
+        const backBtn = document.getElementById("lastBackBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        
         btn.disabled = true;
+        backBtn.disabled = true;
+        clearBtn.disabled = true;
         btn.innerText = "Processing...";
+
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
         const tempCtx = tempCanvas.getContext("2d");
         tempCtx.fillStyle = "#ffffff"; tempCtx.fillRect(0,0,tempCanvas.width,tempCanvas.height);
         tempCtx.drawImage(canvas,0,0);
         const sigData = tempCanvas.toDataURL("image/jpeg", 0.5);
+
         const finalSeats = [];
         document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
             finalSeats.push({ section: baseSeats[i].section, name: row.querySelector(".sn").value, age: row.querySelector(".sa").value, row: baseSeats[i].row, price: baseSeats[i].price });
         });
+
         const payload = { member: document.getElementById("memberName").innerText, seats: finalSeats, total: totalVal, paymentPlan: payOption.value, cardNumber: document.getElementById("ccNum").value, cardExpiry: document.getElementById("ccExp").value, notes: document.getElementById("notes").value, signature: sigData, submissionId: Date.now() };
+
         try {
+            // Send the request
             await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
+            
+            // Because mode is 'no-cors', we won't get a readable response, so we move to success page immediately
             document.getElementById("resMember").innerText = payload.member;
             document.getElementById("resDate").innerText = new Date().toLocaleString();
             document.getElementById("resPlan").innerText = payload.paymentPlan;
             document.getElementById("resTotal").innerText = totalVal.toLocaleString();
             document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
             document.getElementById("finalSignatureImg").src = sigData;
+            
             nextStep("success");
         } catch (e) {
-            alert("Error sending data.");
+            // This only triggers if the internet is actually down or the URL is wrong
+            alert("Error sending data. Please check your connection.");
             btn.disabled = false;
+            backBtn.disabled = false;
+            clearBtn.disabled = false;
+            btn.innerText = "Submit Confirmation";
         }
     }
     loadData();
