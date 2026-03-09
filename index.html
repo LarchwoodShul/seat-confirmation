@@ -16,7 +16,6 @@
         th { background: #f8f9fa; }
         input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
         
-        /* Left Alignment for Radios and Checkboxes */
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
         .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; font-size: 14px; }
         input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
@@ -25,8 +24,15 @@
         button:disabled { background: #ccc; }
         
         .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
+        .summary-label { display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 12px; margin-bottom: 2px; }
+        .summary-value { display: block; font-size: 24px; font-weight: 800; color: #2c3e50; margin-bottom: 15px; }
+        .deposit-value { color: #007bff; }
+
+        .terms-text-box { border: 1px solid #ddd; height: 300px; overflow-y: scroll; padding: 20px; background: #fafafa; font-size: 13px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
+        .terms-text-box h3 { margin-top: 0; text-align: center; }
+        .terms-text-box h4 { margin-bottom: 5px; border-bottom: 1px solid #eee; }
+
         canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
-        
         #finalSignatureImg { border-bottom: 1px solid #333; max-width: 250px; display: block; margin-top: 10px; }
         .agreement-record { font-style: italic; font-size: 13px; color: #555; background: #f9f9f9; padding: 10px; border-radius: 4px; }
 
@@ -47,22 +53,21 @@
             <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
             <tbody></tbody>
         </table>
+        
         <div class="summary-box">
-            <div style="margin-bottom: 15px;">
-                <span style="display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 12px;">Total:</span>
-                <span style="display: block; font-size: 24px; font-weight: 800; color: #2c3e50;">$<span id="total">0</span></span>
-            </div>
-            <div>
-                <span style="display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 12px;">25% Deposit Due:</span>
-                <span style="display: block; font-size: 24px; font-weight: 800; color: #007bff;">$<span id="deposit">0</span></span>
-            </div>
+            <span class="summary-label">Total:</span>
+            <span class="summary-value">$<span id="total">0</span></span>
+            
+            <span class="summary-label">25% Deposit Due:</span>
+            <span class="summary-value deposit-value">$<span id="deposit">0</span></span>
         </div>
+        
         <button onclick="nextStep(2)">Continue to Payment</button>
     </div>
 
     <div id="step2" class="step">
         <h2>2. Payment Plan</h2>
-        <div class="summary-box">
+        <div class="summary-box" style="font-size: 14px;">
             <ul style="margin:0; padding-left:20px;">
                 <li>25% deposit required</li>
                 <li>Balance due within 24 months</li>
@@ -86,7 +91,45 @@
 
     <div id="step3" class="step">
         <h2>3. Final Agreement</h2>
-        <p><a href="YOUR_PDF_LINK" target="_blank">📄 View Seating Agreement (PDF)</a></p>
+        
+        <div class="terms-text-box">
+            <h3>LARCHWOOD SHUL</h3>
+            <p style="text-align: center; font-weight: bold;">Permanent Seating Agreement</p>
+            <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
+            
+            <h4>1. Seat Assignment</h4>
+            <p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
+            
+            <h4>2. Term</h4>
+            <p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment. At the conclusion of the initial term, the seat assignment shall automatically renew for an additional term, provided the Seat Holder remains in good standing and continues to meet the participation and residency expectations of the synagogue.</p>
+            
+            <h4>3. Continued Participation</h4>
+            <p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life. If a Seat Holder relocates their primary residence outside the community or no longer regularly attends synagogue services, the synagogue reserves the right, after appropriate notice and discussion, to review and reassign the seat in the best interest of the community.</p>
+            
+            <h4>4. Payment Terms</h4>
+            <p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation. Seat Holders may elect monthly equal installments, quarterly installments, or payment in full at any time. Failure to confirm acceptance and remit the required initial payment within the stated timeframe will result in release of the assigned seat. Specific seat locations within each section will be finalized in a subsequent phase following confirmation and deposit.</p>
+            
+            <h4>5. Annual Maintenance Fee</h4>
+            <p>Each permanent seat is subject to an annual maintenance fee of $500 per seat. Members who previously purchased permanent seats in the prior shul will receive three (3) years of credit toward their annual maintenance fees, applied on a per-seat basis, representing a $1,500 savings per seat. This credit applies exclusively toward future maintenance fees. Failure to remain current on maintenance obligations may result in review of seat status following notice.</p>
+            
+            <h4>6. Non-Transferability</h4>
+            <p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
+            
+            <h4>7. Passing of a Seat Holder</h4>
+            <p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue. Immediate family members who are year-round residents may submit a written request within six (6) months to be considered for reassignment of the seat. Any such reassignment shall be subject to then-current pricing and eligibility standards in effect at that time. If no qualifying request is made within that period, the seat shall be made available for reallocation by the synagogue.</p>
+            
+            <h4>8. Future Improvements and Assessments</h4>
+            <p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary. Should that occur, the synagogue leadership may determine that an assessment or contribution is required to support such enhancements, in a manner deemed fair and appropriate for the community at that time. Failure to satisfy such assessments, after appropriate notice and opportunity to address the matter, may result in review of seat status.</p>
+            
+            <h4>9. High Holiday Seating</h4>
+            <p>Permanent seat holders will have priority use of their assigned seats during the High Holidays. A High Holiday seating fee, consistent with past practice, will apply. While every effort will be made to accommodate seat holders in their assigned locations, adjustments to seating arrangements may be made from time to time as necessary. By accepting permanent seating, seat holders acknowledge and agree to such reasonable adjustments if required during the High Holidays.</p>
+            
+            <h4>10. Governance</h4>
+            <p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
+            
+            <p style="margin-top: 20px; font-weight: bold; border-top: 1px solid #ccc; padding-top: 10px;">By confirming acceptance of the assigned seat(s) and submitting the required payment, the Seat Holder agrees to the terms set forth in this Agreement.</p>
+        </div>
+
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
@@ -101,7 +144,7 @@
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
         <div id="printArea">
             <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
-                <h3>Permanent Seating Confirmation Record</h3>
+                <h3>Larchwood Shul - Permanent Seating Confirmation</h3>
                 <p><strong>Date:</strong> <span id="resDate"></span></p>
             </div>
             <p><strong>Member Name:</strong> <span id="resMember"></span></p>
@@ -124,6 +167,7 @@
 </div>
 
 <script>
+    // Replace with your Web App URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
     let baseSeats = [];
     let totalVal = 0;
@@ -132,7 +176,6 @@
         const params = new URLSearchParams(window.location.search);
         document.getElementById("memberName").innerText = params.get("member") || "N/A";
 
-        // Mapping shorthand codes to full descriptions and prices
         const seatMap = {
             "MS_R1": { section: "Men’s Seats – Main Shul", row: "Row 1", price: 12000 },
             "LS_R1": { section: "Ladies’ Seats – Main Shul", row: "Row 1", price: 7200 },
@@ -147,20 +190,11 @@
         if(seatStr){
             seatStr.split(",").forEach(s => {
                 const [code, name, age] = s.split("|");
-                
-                // Decode shorthand or fallback
                 const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
                 const decodedName = decodeURIComponent(name);
                 const p = parseFloat(details.price) || 0;
 
-                baseSeats.push({ 
-                    section: details.section, 
-                    name: decodedName, 
-                    age: age, 
-                    row: details.row, 
-                    price: p 
-                });
-                
+                baseSeats.push({ section: details.section, name: decodedName, age: age, row: details.row, price: p });
                 totalVal += p;
 
                 const tr = document.createElement("tr");
@@ -174,8 +208,10 @@
                 document.querySelector("#seatTable tbody").appendChild(tr);
             });
         }
-        document.getElementById("total").innerText = totalVal.toFixed(2);
-        document.getElementById("deposit").innerText = (totalVal * 0.25).toFixed(2);
+        
+        // Formatted with commas
+        document.getElementById("total").innerText = totalVal.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
+        document.getElementById("deposit").innerText = (totalVal * 0.25).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
 
     function nextStep(n){
@@ -213,7 +249,6 @@
         btn.disabled = true;
         btn.innerText = "Processing...";
 
-        // WHITE BACKGROUND FIX
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
@@ -257,7 +292,7 @@
             document.getElementById("resMember").innerText = payload.member;
             document.getElementById("resDate").innerText = new Date().toLocaleString();
             document.getElementById("resPlan").innerText = payload.paymentPlan;
-            document.getElementById("resTotal").innerText = totalVal.toFixed(2);
+            document.getElementById("resTotal").innerText = totalVal.toLocaleString();
             document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
             document.getElementById("finalSignatureImg").src = sigData;
             
@@ -272,4 +307,3 @@
 </script>
 </body>
 </html>
-
