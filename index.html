@@ -15,21 +15,29 @@
         th { background: #f8f9fa; }
         input, textarea{ width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
         button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
         .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
-        .summary-box ul { margin: 5px 0; padding-left: 20px; }
         .pdf-link { display: block; padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; text-align: center; color: #856404; text-decoration: none; font-weight: bold; margin-bottom: 20px; }
         canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
         .checkbox-label { display: block; margin-bottom: 12px; font-size: 14px; cursor: pointer; }
+        
+        /* Print View Styles */
+        #printArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; display: block; width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="formContainer">
     <div id="step1" class="step active">
         <h2>1. Review Seating</h2>
         <p><strong>Member:</strong> <span id="memberName"></span></p>
         <table id="seatTable">
-            <thead><tr><th>Section</th><th>Occupant</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
+            <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
             <tbody></tbody>
         </table>
         <div class="summary-box">
@@ -41,7 +49,6 @@
 
     <div id="step2" class="step">
         <h2>2. Payment Options</h2>
-        
         <div class="summary-box">
             <ul>
                 <li>25% deposit required</li>
@@ -49,65 +56,63 @@
                 <li>Deposit deadline (14 days)</li>
             </ul>
         </div>
-
         <div class="radio-group">
             <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label><br>
             <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label><br>
             <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label><br>
             <label><input type="radio" name="payment" value="Other"> Other</label>
         </div>
-
         <div style="margin-top:20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
             <label>Credit Card Number</label>
             <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
             <label>Expiration (MM/YY)</label>
             <input type="text" id="ccExp" placeholder="MM/YY">
         </div>
-
         <label style="margin-top:15px; display:block;">Additional Payment Instructions</label>
-        <textarea id="notes" rows="3" placeholder="Enter any specific details here..."></textarea>
-        
+        <textarea id="notes" rows="3"></textarea>
         <button onclick="nextStep(3)">Continue to Agreement</button>
     </div>
 
     <div id="step3" class="step">
         <h2>3. Final Agreement</h2>
-        
-        <a href="YOUR_PDF_LINK_HERE" target="_blank" class="pdf-link">
-            📄 Click here to open the Permanent Seating Agreement (PDF)
-        </a>
-
-        <label class="checkbox-label">
-            <input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.
-        </label>
-        
-        <label class="checkbox-label">
-            <input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.
-        </label>
-        
-        <p style="margin-top:20px; font-weight:bold;">Signature:</p>
+        <a href="YOUR_PDF_LINK_HERE" target="_blank" class="pdf-link">📄 View Seating Agreement (PDF)</a>
+        <label class="checkbox-label"><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
+        <label class="checkbox-label"><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations.</label>
+        <p style="font-weight:bold;">Signature:</p>
         <canvas id="signaturePad"></canvas>
-        <button type="button" style="background:#6c757d; padding:5px; font-size:11px; width:auto; margin-top:5px;" onclick="clearSignature()">Clear Signature</button>
-
+        <button type="button" style="background:#6c757d; padding:5px; width:auto;" onclick="clearSignature()">Clear</button>
         <button id="submitBtn" onclick="submitForm()">Submit Confirmation</button>
+    </div>
+
+    <div id="successPage" class="step">
+        <h2>Submission Successful!</h2>
+        <p>Thank you. Your confirmation has been recorded. Please print this page for your records.</p>
+        <div id="printArea" class="summary-box">
+            <h3>Confirmation Summary</h3>
+            <p><strong>Date:</strong> <span id="sDate"></span></p>
+            <p><strong>Member:</strong> <span id="sMember"></span></p>
+            <p><strong>Payment Plan:</strong> <span id="sPlan"></span></p>
+            <p><strong>Total Amount:</strong> $<span id="sTotal"></span></p>
+            <div id="sSeats"></div>
+        </div>
+        <button onclick="window.print()">Print This Page</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQg0Md8MCI_IFtpMlLAnQ_-YAA1iRqpHJHDE8-P7lCC7JGCw7LzUfjzUQK0-ZuIjAQDg/exec";
+    const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE";
     let seats = [];
     let totalAmount = 0;
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
         document.getElementById("memberName").innerText = params.get("member") || "N/A";
-        
         const seatString = params.get("seats");
         if (seatString) {
             seatString.split(",").forEach(s => {
                 const [sec, name, age, row, price] = s.split("|");
                 const p = parseFloat(price) || 0;
-                seats.push({ sec, name, age, row, price: p });
+                seats.push({ section: sec, name: name, age: age, row: row, price: p });
                 totalAmount += p;
                 const tr = document.createElement("tr");
                 tr.innerHTML = `<td>${sec}</td><td><input class="sn" value="${name}"></td><td><input class="sa" type="number" value="${age}"></td><td>${row}</td><td>$${p}</td>`;
@@ -127,59 +132,64 @@
     const canvas = document.getElementById("signaturePad");
     const ctx = canvas.getContext("2d");
     let drawing = false;
-
-    function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-    }
-
+    function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
     canvas.addEventListener("mousedown", () => drawing = true);
     window.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
     canvas.addEventListener("mousemove", (e) => {
         if (!drawing) return;
         const rect = canvas.getBoundingClientRect();
-        ctx.lineWidth = 2;
         ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
         ctx.stroke();
     });
-
     function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     async function submitForm() {
         const payOption = document.querySelector('input[name="payment"]:checked');
-        if (!payOption) return alert("Please select a payment option");
-        if (!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) 
-            return alert("Please check both agreement boxes");
+        if (!payOption) return alert("Select a payment option");
+        if (!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Accept terms");
 
         const btn = document.getElementById("submitBtn");
-        btn.disabled = true;
+        btn.disabled = true; // Deactivate button
         btn.innerText = "Submitting...";
+
+        // Collect updated names/ages from the table
+        const updatedSeats = [];
+        const rows = document.querySelectorAll("#seatTable tbody tr");
+        rows.forEach((row, i) => {
+            updatedSeats.push({
+                section: seats[i].section,
+                name: row.querySelector(".sn").value, // Fix: Use updated value
+                age: row.querySelector(".sa").value, // Fix: Use updated value
+                row: seats[i].row,
+                price: seats[i].price
+            });
+        });
 
         const payload = {
             member: document.getElementById("memberName").innerText,
-            seats: seats,
+            seats: updatedSeats,
             total: totalAmount,
             paymentPlan: payOption.value,
             cardNumber: document.getElementById("ccNum").value,
             cardExpiry: document.getElementById("ccExp").value,
             notes: document.getElementById("notes").value,
-            signature: canvas.toDataURL(),
             submissionId: Date.now()
         };
 
         try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "text/plain" },
-                body: JSON.stringify(payload)
-            });
-            alert("Confirmation submitted successfully!");
-            window.location.reload();
+            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
+            
+            // Populate Success Page
+            document.getElementById("sDate").innerText = new Date().toLocaleString();
+            document.getElementById("sMember").innerText = payload.member;
+            document.getElementById("sPlan").innerText = payload.paymentPlan;
+            document.getElementById("sTotal").innerText = payload.total.toFixed(2);
+            document.getElementById("sSeats").innerHTML = updatedSeats.map(s => `<p>${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            
+            nextStep("SuccessPage"); // Show summary
         } catch (e) {
-            alert("Error submitting. Please try again.");
+            alert("Error. Please try again.");
             btn.disabled = false;
-            btn.innerText = "Submit Confirmation";
         }
     }
     loadData();
