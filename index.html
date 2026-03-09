@@ -86,6 +86,12 @@ padding:10px;
 margin-top:10px;
 }
 
+canvas{
+border:1px solid #ccc;
+width:100%;
+height:200px;
+}
+
 </style>
 
 </head>
@@ -106,7 +112,6 @@ margin-top:10px;
 <table id="seatTable">
 
 <thead>
-
 <tr>
 <th>Section</th>
 <th>Seat Occupant Name</th>
@@ -114,7 +119,6 @@ margin-top:10px;
 <th>Row Category</th>
 <th>Price</th>
 </tr>
-
 </thead>
 
 <tbody></tbody>
@@ -179,7 +183,6 @@ Continue to Terms & Agreement
 
 <p>
 Insert your full Permanent Seating Terms & Conditions here.
-Members must review these terms before confirming.
 </p>
 
 </div>
@@ -193,14 +196,16 @@ I have read and agree to the Permanent Seating Agreement
 
 <label>
 <input type="checkbox" id="agree2">
-I understand seat locations will be finalized after confirmations and deposits are received
+I understand that seat locations will be finalized after confirmations and deposits are received
 </label>
 
 <br><br>
 
-<label>Type Full Name (Signature)</label>
+<label>Signature</label>
 
-<input type="text" id="signature">
+<canvas id="signaturePad"></canvas>
+
+<button type="button" onclick="clearSignature()">Clear Signature</button>
 
 <p>Date: <span id="date"></span></p>
 
@@ -214,7 +219,7 @@ Submit Confirmation
 
 <script>
 
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbz-CA2GMP53nnG-0Od6cFHJIWUwh2QOQi1VjcMr_44lTS0wXakh5bg7D1Fqy6_2pHLiLw/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzrVFSfqy2k1fqjD5jdp7aasNRYMCf_qYCBU63q3AYiPF0MrPTMm6MPargvNCxim2V_dw/exec";
 
 let seats=[];
 let total=0;
@@ -227,8 +232,8 @@ const member=params.get("member");
 const offer=params.get("offer");
 const seatString=params.get("seats");
 
-document.getElementById("memberName").innerText=member;
-document.getElementById("offerType").innerText=offer;
+document.getElementById("memberName").innerText=member || "";
+document.getElementById("offerType").innerText=offer || "";
 
 if(!seatString) return;
 
@@ -314,6 +319,65 @@ return updatedSeats;
 
 }
 
+/* Signature Pad */
+
+const canvas=document.getElementById("signaturePad");
+const ctx=canvas.getContext("2d");
+
+canvas.width=canvas.offsetWidth;
+canvas.height=canvas.offsetHeight;
+
+let drawing=false;
+
+canvas.addEventListener("mousedown",start);
+canvas.addEventListener("mouseup",stop);
+canvas.addEventListener("mousemove",draw);
+
+canvas.addEventListener("touchstart",start);
+canvas.addEventListener("touchend",stop);
+canvas.addEventListener("touchmove",draw);
+
+function start(e){
+drawing=true;
+draw(e);
+}
+
+function stop(){
+drawing=false;
+ctx.beginPath();
+}
+
+function draw(e){
+
+if(!drawing) return;
+
+e.preventDefault();
+
+const rect=canvas.getBoundingClientRect();
+
+const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+
+ctx.lineWidth=2;
+ctx.lineCap="round";
+ctx.strokeStyle="#000";
+
+ctx.lineTo(x,y);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(x,y);
+
+}
+
+function clearSignature(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function getSignature(){
+return canvas.toDataURL("image/png");
+}
+
 async function submitForm(){
 
 if(!document.querySelector('input[name="payment"]:checked'))
@@ -321,9 +385,6 @@ return alert("Select a payment option");
 
 if(!agree1.checked || !agree2.checked)
 return alert("You must accept the agreement");
-
-if(!signature.value)
-return alert("Signature required");
 
 const payload={
 
@@ -341,7 +402,7 @@ paymentPlan:document.querySelector('input[name="payment"]:checked').value,
 
 notes:notes.value,
 
-signature:signature.value,
+signature:getSignature(),
 
 date:new Date().toISOString()
 
@@ -355,7 +416,7 @@ body:JSON.stringify(payload)
 
 const text=await res.text();
 
-alert("Confirmation submitted");
+alert(text);
 
 location.reload();
 
