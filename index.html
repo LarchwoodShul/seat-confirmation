@@ -116,7 +116,7 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdAOtr-gFu_ZpTn40oTgSVAPCc_fJ4EnPovWTWONiVtLniP87q8N8SLbLCWIvAG6UkEA/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwY-0CbMkPqFxvkbsIii6bgnXgf5mJzj3fR5I4Qx7uG2pC-cM6e885Kjn2IqSNfiFbVnw/exec";
     let baseSeats = [];
     let totalVal = 0;
 
@@ -166,56 +166,66 @@
     function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     async function submitForm() {
-        const payOption = document.querySelector('input[name="payment"]:checked');
-        if(!payOption) return alert("Please select a payment plan.");
-        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
+    const payOption = document.querySelector('input[name="payment"]:checked');
+    if(!payOption) return alert("Please select a payment plan.");
+    if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
 
-        const btn = document.getElementById("submitBtn");
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerText = "Processing...";
 
-        const sigData = canvas.toDataURL(); // Capture signature
-        const finalSeats = [];
-        document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
-            finalSeats.push({
-                section: baseSeats[i].section,
-                name: row.querySelector(".sn").value,
-                age: row.querySelector(".sa").value,
-                row: baseSeats[i].row,
-                price: baseSeats[i].price
-            });
+    // KEY FIX: Convert to JPEG with 0.5 compression to reduce character count for Google Sheets
+    const sigData = canvas.toDataURL("image/jpeg", 0.5); 
+
+    const finalSeats = [];
+    document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
+        finalSeats.push({
+            section: baseSeats[i].section,
+            name: row.querySelector(".sn").value,
+            age: row.querySelector(".sa").value,
+            row: baseSeats[i].row,
+            price: baseSeats[i].price
         });
+    });
 
-        const payload = {
-            member: document.getElementById("memberName").innerText,
-            seats: finalSeats,
-            total: totalVal,
-            paymentPlan: payOption.value,
-            cardNumber: document.getElementById("ccNum").value,
-            cardExpiry: document.getElementById("ccExp").value,
-            notes: document.getElementById("notes").value,
-            signature: sigData,
-            submissionId: Date.now()
-        };
+    const payload = {
+        member: document.getElementById("memberName").innerText,
+        seats: finalSeats,
+        total: totalVal,
+        paymentPlan: payOption.value,
+        cardNumber: document.getElementById("ccNum").value,
+        cardExpiry: document.getElementById("ccExp").value,
+        notes: document.getElementById("notes").value,
+        signature: sigData, // Now a smaller string
+        submissionId: Date.now()
+    };
 
-        try {
-            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
-            
-            // Populate Success Page for Printing
-            document.getElementById("resMember").innerText = payload.member;
-            document.getElementById("resDate").innerText = new Date().toLocaleString();
-            document.getElementById("resPlan").innerText = payload.paymentPlan;
-            document.getElementById("resTotal").innerText = totalVal.toFixed(2);
-            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
-            document.getElementById("finalSignatureImg").src = sigData;
-            
-            nextStep("success");
-        } catch (e) {
-            alert("Error. Please check your connection.");
-            btn.disabled = false;
-        }
+    try {
+        const response = await fetch(SCRIPT_URL, { 
+            method: "POST", 
+            mode: "no-cors", 
+            headers: {"Content-Type": "text/plain"}, 
+            body: JSON.stringify(payload) 
+        });
+        
+        // Success Page Population
+        document.getElementById("resMember").innerText = payload.member;
+        document.getElementById("resDate").innerText = new Date().toLocaleString();
+        document.getElementById("resPlan").innerText = payload.paymentPlan;
+        document.getElementById("resTotal").innerText = totalVal.toFixed(2);
+        document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+        document.getElementById("finalSignatureImg").src = sigData;
+        
+        nextStep("success");
+    } catch (e) {
+        console.error(e);
+        alert("Error sending data. Please check your Script URL.");
+        btn.disabled = false;
+        btn.innerText = "Submit Confirmation";
     }
+}
     loadData();
 </script>
 </body>
 </html>
+
