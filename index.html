@@ -11,33 +11,51 @@
         .step{ display:none; }
         .step.active{ display:block; }
         
-        table{ width:100%; border-collapse:collapse; margin:20px 0; font-size: 14px; }
-        th,td{ border:1px solid #dfe6e9; padding:10px; text-align: left; }
+        /* Responsive Table Wrapper */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 20px 0;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+        }
+        table{ width:100%; border-collapse:collapse; font-size: 14px; min-width: 600px; }
+        th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
         th { background: #f8f9fa; }
-        input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
         
+        input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; font-size: 16px; }
+        
+        /* Left Alignment for Radios and Checkboxes */
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
-        .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; font-size: 14px; }
-        input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; font-size: 14px; line-height: 1.4; }
+        input[type="radio"], input[type="checkbox"] { width: 20px; height: 20px; margin: 0; cursor: pointer; flex-shrink: 0; }
 
-        button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
-        button:disabled { background: #ccc; }
+        button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; font-weight: bold; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
         
+        /* Two-Line Summary Box */
         .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
         .summary-label { display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 12px; margin-bottom: 2px; }
-        .summary-value { display: block; font-size: 24px; font-weight: 800; color: #2c3e50; margin-bottom: 15px; }
+        .summary-value { display: block; font-size: 28px; font-weight: 800; color: #2c3e50; margin-bottom: 15px; }
         .deposit-value { color: #007bff; }
 
+        /* Terms Box */
         .terms-text-box { border: 1px solid #ddd; height: 300px; overflow-y: scroll; padding: 20px; background: #fafafa; font-size: 13px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
-        .terms-text-box h3 { margin-top: 0; text-align: center; }
-        .terms-text-box h4 { margin-bottom: 5px; border-bottom: 1px solid #eee; }
+        .terms-text-box h3 { margin-top: 0; text-align: center; color: #2c3e50; }
+        .terms-text-box h4 { margin-bottom: 5px; border-bottom: 1px solid #eee; color: #2c3e50; padding-top: 10px; }
 
-        canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
+        canvas{ border:2px dashed #ccc; width:100%; height:180px; background: #fafafa; cursor: crosshair; touch-action: none; }
         #finalSignatureImg { border-bottom: 1px solid #333; max-width: 250px; display: block; margin-top: 10px; }
-        .agreement-record { font-style: italic; font-size: 13px; color: #555; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+        
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .summary-value { font-size: 22px; }
+            body { padding: 10px; }
+        }
 
         @media print { 
-            .no-print { display: none; } 
+            .no-print, button, .terms-text-box { display: none; } 
             body { background: white; padding: 0; }
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
         }
@@ -49,10 +67,21 @@
     <div id="step1" class="step active">
         <h2>1. Review Seating</h2>
         <p><strong>Member:</strong> <span id="memberName"></span></p>
-        <table id="seatTable">
-            <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
-            <tbody></tbody>
-        </table>
+        
+        <div class="table-responsive">
+            <table id="seatTable">
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Occupant Name</th>
+                        <th>Age</th>
+                        <th>Row</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
         
         <div class="summary-box">
             <span class="summary-label">Total:</span>
@@ -68,24 +97,28 @@
     <div id="step2" class="step">
         <h2>2. Payment Plan</h2>
         <div class="summary-box" style="font-size: 14px;">
-            <ul style="margin:0; padding-left:20px;">
+            <ul style="margin:0; padding-left:20px; line-height: 1.6;">
                 <li>25% deposit required</li>
                 <li>Balance due within 24 months</li>
                 <li>Deposit deadline (14 days)</li>
             </ul>
         </div>
+        
         <div class="left-align-group">
             <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label>
             <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label>
             <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label>
             <label><input type="radio" name="payment" value="Other"> Other</label>
         </div>
+
         <label>Credit Card Number</label>
         <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
         <label>Expiration (MM/YY)</label>
         <input type="text" id="ccExp" placeholder="MM/YY">
+        
         <label>Additional Payment Instructions</label>
-        <textarea id="notes" rows="2"></textarea>
+        <textarea id="notes" rows="2" placeholder="Optional notes..."></textarea>
+        
         <button onclick="nextStep(3)">Continue to Agreement</button>
     </div>
 
@@ -134,9 +167,11 @@
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
         </div>
-        <p><strong>Signature:</strong></p>
+        
+        <p><strong>Digital Signature:</strong></p>
         <canvas id="signaturePad"></canvas>
-        <button type="button" style="background:#6c757d; width:auto; padding:5px 10px; margin-top:5px;" onclick="clearSig()">Clear</button>
+        <button type="button" style="background:#6c757d; width:auto; padding:8px 15px; margin-top:5px; font-size: 14px;" onclick="clearSig()">Clear Signature</button>
+
         <button id="submitBtn" onclick="submitForm()">Submit Confirmation</button>
     </div>
 
@@ -154,21 +189,22 @@
             <h4>Seating Details:</h4>
             <div id="resDetails" style="margin-bottom: 20px;"></div>
 
-            <h4>Agreement & Signature:</h4>
-            <div class="agreement-record">
+            <h4>Agreement Summary:</h4>
+            <div style="font-style: italic; font-size: 13px; color: #555; background: #f9f9f9; padding: 10px; border-radius: 4px;">
                 <p>☑ I have read and agree to the Permanent Seating Agreement.</p>
                 <p>☑ I understand that seat locations will be finalized after confirmations and deposits are received.</p>
             </div>
-            <p><strong>Digitally Signed:</strong></p>
-            <img id="finalSignatureImg" src="" alt="User Signature">
+            <p style="margin-top: 20px;"><strong>Digitally Signed:</strong></p>
+            <img id="finalSignatureImg" src="" alt="Signature">
         </div>
         <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
     </div>
 </div>
 
 <script>
-    // Replace with your Web App URL
+    // --- REPLACE THIS WITH YOUR GOOGLE WEB APP URL ---
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
+
     let baseSeats = [];
     let totalVal = 0;
 
@@ -209,7 +245,7 @@
             });
         }
         
-        // Formatted with commas
+        // Formatted with commas for display
         document.getElementById("total").innerText = totalVal.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
         document.getElementById("deposit").innerText = (totalVal * 0.25).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0});
     }
@@ -221,23 +257,59 @@
         } else {
             document.getElementById("step"+n).classList.add("active");
             if(n === 3) { 
-                const c = document.getElementById("signaturePad"); 
-                c.width = c.offsetWidth; c.height = c.offsetHeight; 
+                resizeCanvas();
             }
         }
+        window.scrollTo(0,0);
     }
 
+    /* Signature Logic */
     const canvas = document.getElementById("signaturePad");
     const ctx = canvas.getContext("2d");
     let drawing = false;
-    canvas.addEventListener("mousedown", () => drawing = true);
-    window.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
-    canvas.addEventListener("mousemove", (e) => {
-        if(!drawing) return;
+
+    function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+    }
+
+    function getPos(e) {
         const rect = canvas.getBoundingClientRect();
-        ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("touchstart", startDrawing);
+    window.addEventListener("mouseup", stopDrawing);
+    window.addEventListener("touchend", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("touchmove", draw);
+
+    function startDrawing(e) {
+        drawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+    }
+
+    function stopDrawing() {
+        drawing = false;
+        ctx.closePath();
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
         ctx.stroke();
-    });
+    }
+
     function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     async function submitForm() {
@@ -249,6 +321,7 @@
         btn.disabled = true;
         btn.innerText = "Processing...";
 
+        // Create white-background signature
         const tempCanvas = document.createElement("canvas");
         tempCanvas.width = canvas.width;
         tempCanvas.height = canvas.height;
@@ -303,6 +376,7 @@
             btn.innerText = "Submit Confirmation";
         }
     }
+
     loadData();
 </script>
 </body>
