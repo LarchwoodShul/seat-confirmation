@@ -2,165 +2,78 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seat Reservation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Permanent Seating Confirmation</title>
 
 <style>
 
 body{
-font-family:Arial,sans-serif;
-background:#f2f2f2;
+font-family:Arial;
+background:#f4f4f4;
 padding:20px;
-font-size:16px;
 }
 
-.form-wrapper{
-max-width:480px;
+.container{
+max-width:700px;
 margin:auto;
-}
-
-.modal{
-display:none;
-position:fixed;
-z-index:9999;
-inset:0;
-background:rgba(0,0,0,0.6);
-}
-
-.modal-content{
-background:#fff;
-max-width:420px;
-margin:20% auto;
-padding:20px;
+background:white;
+padding:25px;
 border-radius:10px;
-text-align:center;
+box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
-.modal-content h3{
-color:#c00;
-}
-
-.banner{
-width:100%;
-height:260px;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-bottom:25px;
-background:#fff;
-}
-
-.banner img{
-max-height:100%;
-max-width:100%;
-}
-
-.section{
-background:#fff;
-padding:20px;
-border-radius:8px;
-margin-bottom:25px;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-.section-title{
-font-size:18px;
-margin-bottom:15px;
-border-bottom:2px solid #ddd;
-padding-bottom:5px;
-}
-
-h1{
-font-size:22px;
-text-align:center;
-}
-
-label{
-font-weight:bold;
-display:block;
-margin-top:12px;
-}
-
-input{
-width:100%;
-background:#f5f5f5;
-border:1px solid #ccc;
-border-radius:4px;
-padding:12px;
-min-height:44px;
-box-sizing:border-box;
+h2{
+margin-top:0;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-margin-top:10px;
+margin-top:15px;
 }
 
 th,td{
-border:1px solid #ccc;
+border:1px solid #ddd;
 padding:8px;
+text-align:left;
 }
 
-#seatGrid input{
-width:100%;
-box-sizing:border-box;
-}
-
-.total{
-font-size:22px;
-font-weight:bold;
-text-align:right;
+.summary{
 margin-top:20px;
+font-size:18px;
 }
 
 button{
-padding:16px;
-font-size:16px;
+margin-top:25px;
+padding:14px;
 width:100%;
-cursor:pointer;
+font-size:16px;
 background:#007bff;
 color:white;
 border:none;
-border-radius:4px;
-display:flex;
-align-items:center;
-justify-content:center;
+border-radius:6px;
+cursor:pointer;
 }
 
-button:disabled{
-background:#cccccc;
-color:#666;
-cursor:not-allowed;
-}
-
-.spinner{
+.step{
 display:none;
-width:18px;
-height:18px;
-border:3px solid rgba(255,255,255,0.3);
-border-top:3px solid #fff;
-border-radius:50%;
-animation:spin 1s linear infinite;
-margin-right:10px;
 }
 
-button.loading .spinner{
-display:inline-block;
+.step.active{
+display:block;
 }
 
-@keyframes spin{
-0%{transform:rotate(0deg)}
-100%{transform:rotate(360deg)}
-}
-
-#signaturePad{
+input[type=text],
+textarea{
 width:100%;
-height:200px;
+padding:10px;
 border:1px solid #ccc;
 border-radius:4px;
-background:#fff;
-touch-action:none;
+margin-top:5px;
+}
+
+.radio-group{
+margin-top:15px;
 }
 
 </style>
@@ -168,47 +81,25 @@ touch-action:none;
 
 <body>
 
-<div class="form-wrapper">
+<div class="container">
 
-<div id="errorModal" class="modal">
-<div class="modal-content">
-<h3>Error</h3>
-<div id="modalMessage"></div>
-<button onclick="closeModal()">OK</button>
-</div>
-</div>
+<!-- STEP 1 -->
 
-<div class="banner">
-<img src="betrachellarchwood_logo.png">
-</div>
+<div id="step1" class="step active">
 
-<h1>Seat Reservation Form</h1>
+<h2>Permanent Seating Confirmation</h2>
 
-<div class="section">
+<p><strong>Member:</strong> <span id="memberName"></span></p>
+<p><strong>Offer Type:</strong> <span id="offerType"></span></p>
 
-<div class="section-title">Personal Information</div>
-
-<label>Name</label>
-<input id="customerName">
-
-<label>Email</label>
-<input id="email" type="email">
-
-<label>Cellphone</label>
-<input id="cellphone">
-
-</div>
-
-<div class="section">
-
-<div class="section-title">Assigned Seats</div>
-
-<table id="seatGrid">
+<table id="seatTable">
 
 <thead>
 <tr>
 <th>Section</th>
 <th>Name</th>
+<th>Age</th>
+<th>Row</th>
 <th>Price</th>
 </tr>
 </thead>
@@ -217,237 +108,199 @@ touch-action:none;
 
 </table>
 
-</div>
+<div class="summary">
 
-<div class="section">
-
-<div class="section-title">Payment Information</div>
-
-<label>Credit Card Number</label>
-<input id="cc">
-
-<label>Expiration Date</label>
-<input id="exp" placeholder="MM/YY">
+<p>Total Seat Amount: $<span id="total"></span></p>
+<p>Required 25% Deposit: $<span id="deposit"></span></p>
+<p>Remaining Balance: $<span id="balance"></span></p>
 
 </div>
 
-<div class="section">
+<button onclick="nextStep(2)">
+Continue to Payment Options
+</button>
 
-<label>
-<input type="checkbox" id="ack">
-I acknowledge the agreement
-<a href="agreement.pdf" target="_blank">View Document</a>
+</div>
+
+<!-- STEP 2 -->
+
+<div id="step2" class="step">
+
+<h2>Payment Plan Selection</h2>
+
+<p>Total Amount: $<span id="total2"></span></p>
+<p>Deposit Required (25%): $<span id="deposit2"></span></p>
+
+<ul>
+<li>25% deposit required</li>
+<li>Balance due within 24 months</li>
+<li>Deposit deadline: 14 days</li>
+</ul>
+
+<div class="radio-group">
+
+<label><input type="radio" name="payment" value="Full"> Pay in Full</label><br>
+<label><input type="radio" name="payment" value="Monthly"> Monthly Installments</label><br>
+<label><input type="radio" name="payment" value="Quarterly"> Quarterly Installments</label><br>
+<label><input type="radio" name="payment" value="Other"> Other</label>
+
+</div>
+
+<label style="margin-top:15px;">Additional Payment Instructions</label>
+<textarea id="notes"></textarea>
+
+<button onclick="nextStep(3)">
+Continue to Terms & Agreement
+</button>
+
+</div>
+
+<!-- STEP 3 -->
+
+<div id="step3" class="step">
+
+<h2>Permanent Seating Agreement</h2>
+
+<div style="height:200px;overflow:auto;border:1px solid #ccc;padding:10px">
+
+<p>Insert full Terms & Conditions text here...</p>
+
+</div>
+
+<label style="margin-top:15px;">
+<input type="checkbox" id="agree1">
+I have read and agree to the Permanent Seating Agreement
 </label>
 
-</div>
+<br>
 
-<div class="section">
+<label>
+<input type="checkbox" id="agree2">
+I understand seat locations will be finalized after confirmations and deposits are received
+</label>
 
-<div class="section-title">Signature</div>
+<label style="margin-top:15px;">Type Full Name (Signature)</label>
+<input type="text" id="signature">
 
-<p>Please sign below</p>
+<p>Date: <span id="date"></span></p>
 
-<canvas id="signaturePad"></canvas>
-
-<button type="button" onclick="clearSignature()">Clear Signature</button>
-
-</div>
-
-<div class="total">
-Total Amount: $<span id="total">0</span>
-</div>
-
-<button id="submitBtn" onclick="submitForm()">
-<span class="spinner"></span>
-<span id="btnText">Submit</span>
+<button onclick="submitForm()">
+Submit Confirmation
 </button>
+
+</div>
 
 </div>
 
 <script>
 
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbxZCdE5kFYu2_nyGavxan2-zcYuQPSFvYP49vJwxXX0E_YesEXV0lF_s1U5vI6ogqucfQ/exec";
+const SCRIPT_URL="PASTE_SCRIPT_URL_HERE";
 
+let seats=[];
 let total=0;
 
-const sectionNames={
-MS_RR:"Men’s Seats – Main Shul (Remaining Rows)",
-MS_R1:"Men’s Seats – Main Shul (Row 1)",
-LS_R1:"Ladies’ Seats – Main Shul (Row 1)",
-LS_RR:"Ladies’ Seats – Main Shul (Remaining Rows)",
-MM_R1:"Men’s Seats – Midrash (Row 1)",
-MM_RR:"Men’s Seats – Midrash (All Other Rows)"
-};
-
-function showError(m){
-document.getElementById("modalMessage").innerText=m;
-document.getElementById("errorModal").style.display="block";
-}
-
-function closeModal(){
-document.getElementById("errorModal").style.display="none";
-}
-
-function loadSeats(){
+function loadData(){
 
 const params=new URLSearchParams(window.location.search);
 
-const name=params.get("name");
-const seats=params.get("seats");
+const member=params.get("member");
+const offer=params.get("offer");
+const seatString=params.get("seats");
 
-if(name) customerName.value=name;
+document.getElementById("memberName").innerText=member;
+document.getElementById("offerType").innerText=offer;
 
-if(!seats) return;
+if(!seatString) return;
 
-const rows=seats.split(",");
+seatString.split(",").forEach(s=>{
 
-rows.forEach(r=>{
+const [section,name,age,row,price]=s.split("|");
 
-const [section,seatName,price]=r.split("|");
+seats.push({
+section,
+name,
+age,
+row,
+price:Number(price)
+});
 
 total+=Number(price);
 
 const tr=document.createElement("tr");
 
 tr.innerHTML=`
-<td>${sectionNames[section] || section}</td>
-<td><input value="${seatName}"></td>
-<td>$${Number(price).toLocaleString()}</td>
+<td>${section}</td>
+<td>${name}</td>
+<td>${age}</td>
+<td>${row}</td>
+<td>$${price}</td>
 `;
 
-document.querySelector("#seatGrid tbody").appendChild(tr);
+document.querySelector("#seatTable tbody").appendChild(tr);
 
 });
 
-document.getElementById("total").innerText=total.toLocaleString();
+const deposit=(total*0.25).toFixed(2);
+const balance=(total-deposit).toFixed(2);
+
+document.getElementById("total").innerText=total;
+document.getElementById("deposit").innerText=deposit;
+document.getElementById("balance").innerText=balance;
+
+document.getElementById("total2").innerText=total;
+document.getElementById("deposit2").innerText=deposit;
+
+document.getElementById("date").innerText=new Date().toLocaleDateString();
 
 }
 
-function collectSeats(){
+function nextStep(n){
 
-let seats=[];
+document.querySelectorAll(".step").forEach(s=>s.classList.remove("active"));
+document.getElementById("step"+n).classList.add("active");
 
-document.querySelectorAll("#seatGrid tbody tr").forEach(r=>{
-
-const section=r.children[0].innerText;
-const name=r.children[1].querySelector("input").value;
-const price=r.children[2].innerText.replace("$","").replace(",","");
-
-seats.push({section,name,price});
-
-});
-
-return seats;
-
-}
-
-const canvas=document.getElementById("signaturePad");
-const ctx=canvas.getContext("2d");
-
-let drawing=false;
-
-canvas.addEventListener("mousedown",start);
-canvas.addEventListener("mouseup",stop);
-canvas.addEventListener("mousemove",draw);
-
-canvas.addEventListener("touchstart",start);
-canvas.addEventListener("touchend",stop);
-canvas.addEventListener("touchmove",draw);
-
-function start(e){
-drawing=true;
-draw(e);
-}
-
-function stop(){
-drawing=false;
-ctx.beginPath();
-}
-
-function draw(e){
-
-if(!drawing) return;
-
-e.preventDefault();
-
-let rect=canvas.getBoundingClientRect();
-
-let x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
-let y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
-
-ctx.lineWidth=2;
-ctx.lineCap="round";
-ctx.strokeStyle="#000";
-
-ctx.lineTo(x,y);
-ctx.stroke();
-ctx.beginPath();
-ctx.moveTo(x,y);
-
-}
-
-function clearSignature(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
-function getSignature(){
-return canvas.toDataURL("image/jpeg");
 }
 
 async function submitForm(){
 
-const btn=document.getElementById("submitBtn");
-const btnText=document.getElementById("btnText");
+if(!document.querySelector('input[name="payment"]:checked'))
+return alert("Select payment option");
 
-try{
+if(!agree1.checked || !agree2.checked)
+return alert("You must accept the terms");
 
-if(!customerName.value.trim()) return showError("Name required");
-if(!email.value.match(/.+@.+/)) return showError("Valid email required");
-if(!cellphone.value.trim()) return showError("Cellphone required");
-if(!cc.value.trim()) return showError("Credit card required");
-if(!exp.value.trim()) return showError("Expiration required");
-if(!ack.checked) return showError("You must acknowledge agreement");
+if(!signature.value)
+return alert("Signature required");
 
-btn.disabled=true;
-btn.classList.add("loading");
-btnText.innerText="Processing...";
+const payload={
+submissionId:crypto.randomUUID(),
+member:memberName.innerText,
+offer:offerType.innerText,
+seats,
+total,
+deposit:(total*0.25),
+balance:(total*0.75),
+paymentPlan:document.querySelector('input[name="payment"]:checked').value,
+notes:notes.value,
+signature:signature.value,
+date:new Date().toISOString()
+};
 
 await fetch(SCRIPT_URL,{
 method:"POST",
-mode:"no-cors",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-submissionId:crypto.randomUUID(),
-name:customerName.value,
-email:email.value,
-cellphone:cellphone.value,
-cc:cc.value,
-exp:exp.value,
-totalAmount:total,
-seats:collectSeats(),
-signature:getSignature()
-})
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify(payload)
 });
 
-alert("Form submitted successfully");
+alert("Confirmation submitted");
+
 location.reload();
 
-}catch(e){
-
-showError("Connection error. Please try again.");
-btn.disabled=false;
-btn.classList.remove("loading");
-btnText.innerText="Submit";
-
 }
 
-}
-
-loadSeats();
+loadData();
 
 </script>
 
 </body>
-
 </html>
-
