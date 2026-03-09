@@ -10,24 +10,25 @@
         h2{ margin-top:0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .step{ display:none; }
         .step.active{ display:block; }
-        table{ width:100%; border-collapse:collapse; margin:20px 0; font-size: 14px; }
-        th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
-        th { background: #f8f9fa; }
-        input, textarea{ width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
-        button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
-        .pdf-link { display: block; padding: 15px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 8px; text-align: center; color: #856404; text-decoration: none; font-weight: bold; margin-bottom: 20px; }
-        canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
-        .checkbox-label { display: block; margin-bottom: 12px; font-size: 14px; cursor: pointer; }
         
-        /* Print View Styles */
-        #printArea { display: none; }
-        @media print {
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
-            #printArea { position: absolute; left: 0; top: 0; display: block; width: 100%; }
-        }
+        /* Table Styles */
+        table{ width:100%; border-collapse:collapse; margin:20px 0; font-size: 14px; }
+        th,td{ border:1px solid #dfe6e9; padding:10px; text-align: left; }
+        th { background: #f8f9fa; }
+        input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; }
+        
+        /* Left Alignment for Radios and Checkboxes */
+        .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
+        .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; }
+        input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+
+        button{ margin-top:20px; padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
+        button:disabled { background: #ccc; }
+        
+        .summary-box{ background: #eef7ff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 5px solid #007bff; }
+        canvas{ border:2px dashed #ccc; width:100%; height:150px; background: #fafafa; cursor: crosshair; }
+        
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body>
@@ -41,154 +42,158 @@
             <tbody></tbody>
         </table>
         <div class="summary-box">
-            <p><strong>Total Amount:</strong> $<span id="total">0</span></p>
-            <p><strong>25% Deposit Due:</strong> $<span id="deposit">0</span></p>
+            <p>Total: $<span id="total">0</span> | 25% Deposit: $<span id="deposit">0</span></p>
         </div>
         <button onclick="nextStep(2)">Continue to Payment</button>
     </div>
 
     <div id="step2" class="step">
-        <h2>2. Payment Options</h2>
+        <h2>2. Payment Plan</h2>
         <div class="summary-box">
-            <ul>
+            <ul style="margin:0; padding-left:20px;">
                 <li>25% deposit required</li>
                 <li>Balance due within 24 months</li>
                 <li>Deposit deadline (14 days)</li>
             </ul>
         </div>
-        <div class="radio-group">
-            <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label><br>
-            <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label><br>
-            <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label><br>
+
+        <div class="left-align-group">
+            <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label>
+            <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label>
+            <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label>
             <label><input type="radio" name="payment" value="Other"> Other</label>
         </div>
-        <div style="margin-top:20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-            <label>Credit Card Number</label>
-            <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
-            <label>Expiration (MM/YY)</label>
-            <input type="text" id="ccExp" placeholder="MM/YY">
-        </div>
-        <label style="margin-top:15px; display:block;">Additional Payment Instructions</label>
+
+        <label>Credit Card Number</label>
+        <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
+        <label>Expiration (MM/YY)</label>
+        <input type="text" id="ccExp" placeholder="MM/YY">
+
+        <label>Additional Payment Instructions</label>
         <textarea id="notes" rows="3"></textarea>
+        
         <button onclick="nextStep(3)">Continue to Agreement</button>
     </div>
 
     <div id="step3" class="step">
         <h2>3. Final Agreement</h2>
-        <a href="YOUR_PDF_LINK_HERE" target="_blank" class="pdf-link">📄 View Seating Agreement (PDF)</a>
-        <label class="checkbox-label"><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
-        <label class="checkbox-label"><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations.</label>
-        <p style="font-weight:bold;">Signature:</p>
+        <p><a href="YOUR_PDF_LINK" target="_blank">📄 View Seating Agreement (PDF)</a></p>
+        
+        <div class="left-align-group">
+            <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
+            <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
+        </div>
+        
+        <p><strong>Signature:</strong></p>
         <canvas id="signaturePad"></canvas>
-        <button type="button" style="background:#6c757d; padding:5px; width:auto;" onclick="clearSignature()">Clear</button>
+        <button type="button" style="background:#6c757d; width:auto; padding:5px 10px; margin-top:5px;" onclick="clearSig()">Clear</button>
+
         <button id="submitBtn" onclick="submitForm()">Submit Confirmation</button>
     </div>
 
     <div id="successPage" class="step">
-        <h2>Submission Successful!</h2>
-        <p>Thank you. Your confirmation has been recorded. Please print this page for your records.</p>
-        <div id="printArea" class="summary-box">
-            <h3>Confirmation Summary</h3>
-            <p><strong>Date:</strong> <span id="sDate"></span></p>
-            <p><strong>Member:</strong> <span id="sMember"></span></p>
-            <p><strong>Payment Plan:</strong> <span id="sPlan"></span></p>
-            <p><strong>Total Amount:</strong> $<span id="sTotal"></span></p>
-            <div id="sSeats"></div>
+        <h2 style="color: #28a745;">✔ Submission Successful!</h2>
+        <div id="printArea">
+            <p><strong>Member:</strong> <span id="resMember"></span></p>
+            <p><strong>Date:</strong> <span id="resDate"></span></p>
+            <p><strong>Payment Plan:</strong> <span id="resPlan"></span></p>
+            <div id="resDetails" style="border-top: 1px solid #eee; margin-top:10px; padding-top:10px;"></div>
         </div>
-        <button onclick="window.print()">Print This Page</button>
+        <button class="no-print" onclick="window.print()" style="background:#28a745;">Print Summary</button>
     </div>
 </div>
 
 <script>
-    const SCRIPT_URL = "YOUR_SCRIPT_URL_HERE";
-    let seats = [];
-    let totalAmount = 0;
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwdAOtr-gFu_ZpTn40oTgSVAPCc_fJ4EnPovWTWONiVtLniP87q8N8SLbLCWIvAG6UkEA/exec";
+    let baseSeats = [];
+    let totalVal = 0;
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
         document.getElementById("memberName").innerText = params.get("member") || "N/A";
-        const seatString = params.get("seats");
-        if (seatString) {
-            seatString.split(",").forEach(s => {
+        const seatStr = params.get("seats");
+        if(seatStr){
+            seatStr.split(",").forEach(s => {
                 const [sec, name, age, row, price] = s.split("|");
                 const p = parseFloat(price) || 0;
-                seats.push({ section: sec, name: name, age: age, row: row, price: p });
-                totalAmount += p;
+                baseSeats.push({ section: sec, name, age, row, price: p });
+                totalVal += p;
                 const tr = document.createElement("tr");
                 tr.innerHTML = `<td>${sec}</td><td><input class="sn" value="${name}"></td><td><input class="sa" type="number" value="${age}"></td><td>${row}</td><td>$${p}</td>`;
                 document.querySelector("#seatTable tbody").appendChild(tr);
             });
         }
-        document.getElementById("total").innerText = totalAmount.toFixed(2);
-        document.getElementById("deposit").innerText = (totalAmount * 0.25).toFixed(2);
+        document.getElementById("total").innerText = totalVal.toFixed(2);
+        document.getElementById("deposit").innerText = (totalVal * 0.25).toFixed(2);
     }
 
-    function nextStep(s) {
-        document.querySelectorAll(".step").forEach(div => div.classList.remove("active"));
-        document.getElementById("step" + s).classList.add("active");
-        if(s === 3) resizeCanvas();
+    function nextStep(n){
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        if(n === "success") {
+            document.getElementById("successPage").classList.add("active");
+        } else {
+            document.getElementById("step"+n).classList.add("active");
+            if(n === 3) { const c = document.getElementById("signaturePad"); c.width = c.offsetWidth; c.height = c.offsetHeight; }
+        }
     }
 
     const canvas = document.getElementById("signaturePad");
     const ctx = canvas.getContext("2d");
     let drawing = false;
-    function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
     canvas.addEventListener("mousedown", () => drawing = true);
     window.addEventListener("mouseup", () => { drawing = false; ctx.beginPath(); });
     canvas.addEventListener("mousemove", (e) => {
-        if (!drawing) return;
+        if(!drawing) return;
         const rect = canvas.getBoundingClientRect();
         ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
         ctx.stroke();
     });
-    function clearSignature() { ctx.clearRect(0,0,canvas.width,canvas.height); }
+    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
     async function submitForm() {
         const payOption = document.querySelector('input[name="payment"]:checked');
-        if (!payOption) return alert("Select a payment option");
-        if (!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Accept terms");
+        if(!payOption) return alert("Please select a payment plan.");
+        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
 
         const btn = document.getElementById("submitBtn");
-        btn.disabled = true; // Deactivate button
-        btn.innerText = "Submitting...";
+        btn.disabled = true;
+        btn.innerText = "Processing...";
 
-        // Collect updated names/ages from the table
-        const updatedSeats = [];
-        const rows = document.querySelectorAll("#seatTable tbody tr");
-        rows.forEach((row, i) => {
-            updatedSeats.push({
-                section: seats[i].section,
-                name: row.querySelector(".sn").value, // Fix: Use updated value
-                age: row.querySelector(".sa").value, // Fix: Use updated value
-                row: seats[i].row,
-                price: seats[i].price
+        const finalSeats = [];
+        document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
+            finalSeats.push({
+                section: baseSeats[i].section,
+                name: row.querySelector(".sn").value,
+                age: row.querySelector(".sa").value,
+                row: baseSeats[i].row,
+                price: baseSeats[i].price
             });
         });
 
         const payload = {
             member: document.getElementById("memberName").innerText,
-            seats: updatedSeats,
-            total: totalAmount,
+            seats: finalSeats,
+            total: totalVal,
             paymentPlan: payOption.value,
             cardNumber: document.getElementById("ccNum").value,
             cardExpiry: document.getElementById("ccExp").value,
             notes: document.getElementById("notes").value,
+            termsAccepted: true, // They can only submit if true
             submissionId: Date.now()
         };
 
         try {
-            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) });
+            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
             
             // Populate Success Page
-            document.getElementById("sDate").innerText = new Date().toLocaleString();
-            document.getElementById("sMember").innerText = payload.member;
-            document.getElementById("sPlan").innerText = payload.paymentPlan;
-            document.getElementById("sTotal").innerText = payload.total.toFixed(2);
-            document.getElementById("sSeats").innerHTML = updatedSeats.map(s => `<p>${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            document.getElementById("resMember").innerText = payload.member;
+            document.getElementById("resDate").innerText = new Date().toLocaleString();
+            document.getElementById("resPlan").innerText = payload.paymentPlan;
+            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
             
-            nextStep("SuccessPage"); // Show summary
+            nextStep("success");
         } catch (e) {
-            alert("Error. Please try again.");
+            alert("Error. Please check your connection.");
             btn.disabled = false;
         }
     }
