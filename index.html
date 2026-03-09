@@ -165,7 +165,7 @@
     });
     function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
 
-    async function submitForm() {
+async function submitForm() {
     const payOption = document.querySelector('input[name="payment"]:checked');
     if(!payOption) return alert("Please select a payment plan.");
     if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
@@ -174,8 +174,22 @@
     btn.disabled = true;
     btn.innerText = "Processing...";
 
-    // KEY FIX: Convert to JPEG with 0.5 compression to reduce character count for Google Sheets
-    const sigData = canvas.toDataURL("image/jpeg", 0.5); 
+    // --- FIX FOR BLACK SQUARE: Create a version with a white background ---
+    const tempCanvas = document.createElement("canvas");
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext("2d");
+
+    // 1. Fill background with white
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+    // 2. Draw the signature on top of the white background
+    tempCtx.drawImage(canvas, 0, 0);
+
+    // 3. Export as JPEG (now it will have a white background instead of black)
+    const sigData = tempCanvas.toDataURL("image/jpeg", 0.5); 
+    // -----------------------------------------------------------------------
 
     const finalSeats = [];
     document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
@@ -196,19 +210,19 @@
         cardNumber: document.getElementById("ccNum").value,
         cardExpiry: document.getElementById("ccExp").value,
         notes: document.getElementById("notes").value,
-        signature: sigData, // Now a smaller string
+        signature: sigData,
         submissionId: Date.now()
     };
 
     try {
-        const response = await fetch(SCRIPT_URL, { 
+        await fetch(SCRIPT_URL, { 
             method: "POST", 
             mode: "no-cors", 
             headers: {"Content-Type": "text/plain"}, 
             body: JSON.stringify(payload) 
         });
         
-        // Success Page Population
+        // Populate Success Page
         document.getElementById("resMember").innerText = payload.member;
         document.getElementById("resDate").innerText = new Date().toLocaleString();
         document.getElementById("resPlan").innerText = payload.paymentPlan;
@@ -218,8 +232,7 @@
         
         nextStep("success");
     } catch (e) {
-        console.error(e);
-        alert("Error sending data. Please check your Script URL.");
+        alert("Error sending data. Please check your connection.");
         btn.disabled = false;
         btn.innerText = "Submit Confirmation";
     }
@@ -228,4 +241,5 @@
 </script>
 </body>
 </html>
+
 
