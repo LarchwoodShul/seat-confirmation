@@ -150,7 +150,10 @@
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
         </div>
-        <label>Type Full Name for Signature:</label><input type="text" id="typeSignature" placeholder="Enter your full name">
+        
+        <label>Type Full Name for Signature:</label>
+        <input type="text" id="typeSignature" placeholder="Enter your full name">
+
         <div class="btn-group">
             <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
             <button type="button" id="submitBtn" class="next-btn" onclick="handleFormSubmission()">Submit Confirmation</button>
@@ -159,12 +162,14 @@
 
     <div id="successPage" class="step">
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
+        
         <div class="no-print" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ffc107;">
             <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                 <input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> 
                 <strong>Include a copy of the Bylaws (Terms) when printing</strong>
             </label>
         </div>
+
         <div id="printArea">
             <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
                 <h3>Larchwood Shul - Permanent Seating Confirmation</h3>
@@ -273,14 +278,19 @@
     }
 
     async function handleFormSubmission() {
+        // --- VALIDATION LOGIC ---
         const payOption = document.querySelector('input[name="payment"]:checked');
-        const signature = document.getElementById("typeSignature").value;
+        const signature = document.getElementById("typeSignature").value.trim();
+        const agree1 = document.getElementById("agree1").checked;
+        const agree2 = document.getElementById("agree2").checked;
+
         if(!payOption) return alert("Please select a payment plan.");
-        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
-        if(!signature) return alert("Please type your name.");
+        if(!agree1 || !agree2) return alert("You must check both agreement boxes to proceed.");
+        if(!signature) return alert("Please type your name for the digital signature.");
         
         const btn = document.getElementById("submitBtn");
-        btn.disabled = true; btn.innerText = "Processing...";
+        const backBtn = document.getElementById("lastBackBtn");
+        btn.disabled = true; backBtn.disabled = true; btn.innerText = "Processing...";
 
         const payload = {
             member: document.getElementById("memberName").innerText,
@@ -292,6 +302,7 @@
             submissionId: Date.now()
         };
 
+        // Populate Success Details
         document.getElementById("resMember").innerText = payload.member;
         document.getElementById("resDate").innerText = new Date().toLocaleString();
         document.getElementById("resPlan").innerText = payload.paymentPlan;
@@ -311,10 +322,11 @@
                 document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
                 document.getElementById("successPage").classList.add("active");
                 window.scrollTo(0,0);
-            }, 500);
+            }, 800);
         } catch (e) {
             document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
             document.getElementById("successPage").classList.add("active");
+            window.scrollTo(0,0);
         }
     }
     loadData();
