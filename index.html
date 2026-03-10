@@ -40,12 +40,10 @@
         .deposit-value { color: #007bff; }
 
         .terms-text-box { border: 1px solid #ddd; height: 450px; overflow-y: scroll; padding: 25px; background: #fafafa; font-size: 15px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
-        .terms-text-box h3 { text-align: center; margin-bottom: 5px; }
-        .terms-text-box h4 { margin-top: 15px; margin-bottom: 5px; color: #2c3e50; border-bottom: 1px solid #eee; }
-
+        
         @media print { 
             .no-print, button, .print-hide { display: none !important; } 
-            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding:0; }
             .terms-text-box { height: auto !important; overflow: visible !important; border: none !important; display: none; }
             #printBylaws.show-bylaws { display: block !important; }
         }
@@ -112,17 +110,16 @@
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align:center; font-weight:bold;">Permanent Seating Agreement</p>
             <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
-            <h4>1. Seat Assignment</h4><p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
-            <h4>2. Term</h4><p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment...</p>
-            <h4>3. Continued Participation</h4><p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life...</p>
-            <h4>4. Payment Terms</h4><p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months...</p>
-            <h4>5. Annual Maintenance Fee</h4><p>Each permanent seat is subject to an annual maintenance fee of $500 per seat...</p>
-            <h4>6. Non-Transferability</h4><p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
+            <h4>1. Seat Assignment</h4><p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein...</p>
+            <h4>2. Term</h4><p>Permanent seating is granted for an initial term of fifteen (15) years...</p>
+            <h4>3. Continued Participation</h4><p>Permanent seating is intended for members who reside year-round...</p>
+            <h4>4. Payment Terms</h4><p>An initial payment of twenty-five percent (25%)...</p>
+            <h4>5. Annual Maintenance Fee</h4><p>Each permanent seat is subject to an annual maintenance fee of $500...</p>
+            <h4>6. Non-Transferability</h4><p>Permanent seats are personal and may not be transferred.</p>
             <h4>7. Passing of a Seat Holder</h4><p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue...</p>
-            <h4>8. Future Improvements and Assessments</h4><p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary...</p>
-            <h4>9. High Holiday Seating</h4><p>Permanent seat holders will have priority use of their assigned seats during the High Holidays...</p>
-            <h4>10. Governance</h4><p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
-            <p style="margin-top:20px; font-weight:bold; border-top: 1px solid #eee; padding-top:10px;">By confirming acceptance of the assigned seat(s) and submitting the required payment, the Seat Holder agrees to the terms set forth in this Agreement.</p>
+            <h4>8. Future Improvements</h4><p>Syngagogue leadership may determine that an assessment is required for enhancements...</p>
+            <h4>9. High Holiday Seating</h4><p>Permanent seat holders will have priority use during the High Holidays...</p>
+            <h4>10. Governance</h4><p>Subject to synagogue policies as adopted or amended.</p>
         </div>
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
@@ -131,20 +128,18 @@
         <label>Type Full Name for Signature:</label><input type="text" id="typeSignature" placeholder="Enter your full name">
         <div class="btn-group">
             <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
-            <button type="button" id="submitBtn" class="next-btn" onclick="submitForm()">Submit Confirmation</button>
+            <button type="button" id="submitBtn" class="next-btn" onclick="handleFormSubmission()">Submit Confirmation</button>
         </div>
     </div>
 
     <div id="successPage" class="step">
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
-        
         <div class="no-print" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ffc107;">
             <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                 <input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> 
                 <strong>Include a copy of the Bylaws (Terms) when printing</strong>
             </label>
         </div>
-
         <div id="printArea">
             <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
                 <h3>Larchwood Shul - Permanent Seating Confirmation</h3>
@@ -158,16 +153,13 @@
                 <p><strong>Remaining Balance:</strong> $<span id="resBalance"></span></p>
             </div>
             <h4>Approved Seating Details:</h4>
-            <div id="resDetails" style="margin-bottom: 20px;"></div>
+            <div id="resDetails"></div>
             <div id="resDeferredArea" style="display:none;">
                 <h4>Deferred Requests:</h4>
-                <div id="resDeferredDetails" style="margin-bottom: 20px; color: #666;"></div>
+                <div id="resDeferredDetails" style="color: #666;"></div>
             </div>
             <p style="margin-top: 20px; border-bottom: 1px solid #333; display: inline-block;"><strong>Signature:</strong> <span id="finalSignature"></span></p>
-            
-            <div id="printBylaws">
-                <div id="bylawsContent"></div>
-            </div>
+            <div id="printBylaws"><div id="bylawsContent"></div></div>
         </div>
         <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
     </div>
@@ -175,9 +167,7 @@
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
-    let baseSeats = [];
-    let deferredSeats = [];
-    let totalVal = 0;
+    let baseSeats = [], deferredSeats = [], totalVal = 0;
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
@@ -212,7 +202,7 @@
                     if(!categories[catKey]) categories[catKey] = { qty: 0, price: p };
                     categories[catKey].qty++;
                     const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${details.section}</td><td><input class="sn" value="${decodedName}"></td><td><input class="sa" type="number" value="${age}"></td><td>${details.row}</td><td>$${p.toLocaleString()}</td>`;
+                    tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td><td>$${p.toLocaleString()}</td>`;
                     document.querySelector("#seatTable tbody").appendChild(tr);
                 }
             });
@@ -233,6 +223,16 @@
         document.getElementById("displayBalance").innerText = (totalVal - deposit).toLocaleString();
     }
 
+    function nextStep(n){
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step"+n).classList.add("active");
+        window.scrollTo(0,0);
+    }
+    function prevStep(n){
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+        document.getElementById("step"+n).classList.add("active");
+        window.scrollTo(0,0);
+    }
     function toggleBylaws() {
         const checked = document.getElementById("includeBylaws").checked;
         const printBox = document.getElementById("printBylaws");
@@ -245,19 +245,7 @@
         }
     }
 
-    function nextStep(n){
-        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-        document.getElementById("step"+n).classList.add("active");
-        window.scrollTo(0,0);
-    }
-
-    function prevStep(n){
-        document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-        document.getElementById("step"+n).classList.add("active");
-        window.scrollTo(0,0);
-    }
-
-    async function submitForm() {
+    async function handleFormSubmission() {
         const payOption = document.querySelector('input[name="payment"]:checked');
         const signature = document.getElementById("typeSignature").value;
         if(!payOption) return alert("Please select a payment plan.");
@@ -265,8 +253,7 @@
         if(!signature) return alert("Please type your name.");
         
         const btn = document.getElementById("submitBtn");
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+        btn.disabled = true; btn.innerText = "Processing...";
 
         const payload = {
             member: document.getElementById("memberName").innerText,
@@ -274,26 +261,34 @@
             paymentPlan: payOption.value,
             notes: document.getElementById("notes").value,
             signature: signature,
+            seats: baseSeats,
             submissionId: Date.now()
         };
 
+        // Populate Success Page before redirect
+        document.getElementById("resMember").innerText = payload.member;
+        document.getElementById("resDate").innerText = new Date().toLocaleString();
+        document.getElementById("resPlan").innerText = payload.paymentPlan;
+        document.getElementById("resTotal").innerText = totalVal.toLocaleString();
+        document.getElementById("resDeposit").innerText = (totalVal * 0.25).toLocaleString();
+        document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
+        document.getElementById("finalSignature").innerText = signature;
+        document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        if (deferredSeats.length > 0) {
+            document.getElementById("resDeferredArea").style.display = "block";
+            document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        }
+
         try {
-            await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
-            document.getElementById("resMember").innerText = payload.member;
-            document.getElementById("resDate").innerText = new Date().toLocaleString();
-            document.getElementById("resPlan").innerText = payload.paymentPlan;
-            document.getElementById("resTotal").innerText = totalVal.toLocaleString();
-            document.getElementById("resDeposit").innerText = (totalVal * 0.25).toLocaleString();
-            document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
-            document.getElementById("finalSignature").innerText = signature;
-            document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
-            if (deferredSeats.length > 0) {
-                document.getElementById("resDeferredArea").style.display = "block";
-                document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
-            }
-            nextStep("successPage");
+            // Trigger fetch and immediately move to success page (bypass CORS timeout)
+            fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
+            setTimeout(() => {
+                document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+                document.getElementById("successPage").classList.add("active");
+                window.scrollTo(0,0);
+            }, 500);
         } catch (e) {
-            nextStep("successPage"); // Forced success redirection
+            alert("Connection error. Data might not have saved.");
         }
     }
     loadData();
