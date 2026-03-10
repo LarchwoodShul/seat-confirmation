@@ -170,7 +170,7 @@
                     tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td>`;
                     document.querySelector("#deferredTable tbody").appendChild(tr);
                 } else {
-                    allSeats.push({ id: index, section: details.section, name: decodedName, age, row: details.row, price: parseFloat(details.price), active: true });
+                    allSeats.push({ id: index, section: details.section, name: decodedName, age, row: details.row, price: parseFloat(details.price), active: false });
                 }
             });
         }
@@ -263,5 +263,6 @@
 </script>
 </body>
 </html>
+
 
 
