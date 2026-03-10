@@ -11,23 +11,31 @@
         h3.section-title { margin-top: 30px; color: #2c3e50; border-left: 4px solid #007bff; padding-left: 10px; font-size: 18px; }
         .step{ display:none; }
         .step.active{ display:block; }
+        
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px 0; border: 1px solid #dfe6e9; border-radius: 8px; }
         table{ width:100%; border-collapse:collapse; font-size: 14px; min-width: 600px; }
         th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
         th { background: #f8f9fa; }
+        
         .subtotal-table { width: 100%; border: 1px solid #ccc; margin-top: 20px; background: #fff; }
+        .subtotal-table th { background: #f1f1f1; color: #333; }
+        
         input[type="text"], input[type="number"], textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; font-size: 14px; }
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
         .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; }
+        
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         button{ padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; font-weight: bold; }
         button:disabled { background: #ccc !important; }
         .back-btn { background: #6c757d; flex: 1; }
         .next-btn { flex: 2; }
+        
         .final-totals-container { margin-top: 25px; padding: 20px; background: #eef7ff; border-radius: 8px; border-left: 5px solid #007bff; }
         .total-label { display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 11px; }
         .total-value { display: block; font-size: 24px; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
+
         .terms-text-box { border: 1px solid #ddd; height: 400px; overflow-y: scroll; padding: 20px; background: #fafafa; font-size: 15px; line-height: 1.6; border-radius: 8px; }
+        
         @media print { 
             .no-print, button { display: none !important; } 
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
@@ -142,12 +150,25 @@
 </div>
 
 <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2J5tqWeSMnzK8LBrGCEH5WKK8SyhVaMkI_wm3hM4JMkZYgIAy8v-jlNw5OC3PhjErxA/exec";
+    // Replace with your current SCRIPT_URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
     let allSeats = [], deferredSeats = [], totalVal = 0;
+
+    // Helper to decode URL parameters and handle iPhone space encoding
+    function decodeSafe(str) {
+        if(!str) return "";
+        try {
+            // Decodes %20 to space and handles + as space
+            return decodeURIComponent(str.replace(/\+/g, ' '));
+        } catch(e) { return str; }
+    }
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
-        document.getElementById("memberName").innerText = params.get("member") || "N/A";
+        
+        // FIXED IPHONE DECODING FOR MEMBER NAME
+        document.getElementById("memberName").innerText = decodeSafe(params.get("member")) || "N/A";
+        
         const seatMap = {
             "MS_R1": { section: "Men’s Seats – Main Shul", row: "Row 1", price: 12000 },
             "LS_R1": { section: "Ladies’ Seats – Main Shul", row: "Row 1", price: 7200 },
@@ -157,20 +178,27 @@
             "LS_RR": { section: "Ladies’ Seats – Main Shul", row: "Remaining Rows", price: 5200 },
             "MS_R2": { section: "Men’s Seats – Main Shul", row: "Row 2", price: 10000 }
         };
+
         const seatStr = params.get("seats");
         if(seatStr){
             seatStr.split(",").forEach((s, index) => {
-                const [code, name, age, status] = s.split("|");
+                const parts = s.split("|");
+                const code = parts[0];
+                const name = decodeSafe(parts[1]);
+                const age = parts[2];
+                const status = parts[3];
+
                 const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
-                const decodedName = decodeURIComponent(name);
-                if (status === "DEFERRED") {
-                    deferredSeats.push({ section: details.section, name: decodedName, age, row: details.row });
+
+                if (status === "Denied" || status === "DEFERRED") {
+                    deferredSeats.push({ section: details.section, name: name, age, row: details.row });
                     document.getElementById("deferredSection").style.display = "block";
                     const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td>`;
+                    tr.innerHTML = `<td>${details.section}</td><td>${name}</td><td>${age}</td><td>${details.row}</td>`;
                     document.querySelector("#deferredTable tbody").appendChild(tr);
                 } else {
-                    allSeats.push({ id: index, section: details.section, name: decodedName, age, row: details.row, price: parseFloat(details.price), active: false });
+                    // ACCEPT CHECKBOX IS OFF BY DEFAULT
+                    allSeats.push({ id: index, code, section: details.section, name: name, age: age, row: details.row, price: parseFloat(details.price), active: false });
                 }
             });
         }
@@ -193,8 +221,16 @@
         calculateTotals();
     }
 
-    function toggleSeat(id) { allSeats.find(s => s.id === id).active = !allSeats.find(s => s.id === id).active; calculateTotals(); renderSeatTable(); }
-    function updateSeatData(id, field, value) { allSeats.find(s => s.id === id)[field] = value; }
+    function toggleSeat(id) { 
+        const seat = allSeats.find(s => s.id === id);
+        seat.active = !seat.active; 
+        calculateTotals(); 
+    }
+
+    function updateSeatData(id, field, value) { 
+        const seat = allSeats.find(s => s.id === id);
+        seat[field] = value; 
+    }
 
     function calculateTotals() {
         const cats = {}; totalVal = 0;
@@ -263,6 +299,3 @@
 </script>
 </body>
 </html>
-
-
-
