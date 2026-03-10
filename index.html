@@ -21,11 +21,12 @@
         .subtotal-table { width: 100%; border: 1px solid #ccc; margin-top: 20px; background: #fff; }
         .subtotal-table th { background: #f1f1f1; color: #333; }
         
-        input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; font-size: 16px; }
-        
+        input[type="text"], input[type="number"], textarea, select { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; font-size: 14px; }
+        .table-input { width: 100%; }
+
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
         .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; width: 100%; text-align: left; font-size: 14px; line-height: 1.4; }
-        input[type="radio"], input[type="checkbox"] { width: 20px; height: 20px; margin: 0; cursor: pointer; flex-shrink: 0; }
+        input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; flex-shrink: 0; }
 
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         button{ padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; font-weight: bold; }
@@ -40,9 +41,7 @@
         .deposit-value { color: #007bff; }
 
         .terms-text-box { border: 1px solid #ddd; height: 450px; overflow-y: scroll; padding: 25px; background: #fafafa; font-size: 15px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
-        .terms-text-box h3 { text-align: center; margin-bottom: 5px; }
-        .terms-text-box h4 { margin-top: 15px; margin-bottom: 5px; color: #2c3e50; border-bottom: 1px solid #eee; }
-
+        
         @media print { 
             .no-print, button, .print-hide { display: none !important; } 
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding:0; }
@@ -61,10 +60,20 @@
         <h3 class="section-title">Approved - please review spelling for accuracy</h3>
         <div class="table-responsive">
             <table id="seatTable">
-                <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Accept / Decline</th>
+                        <th>Section</th>
+                        <th>Occupant Name</th>
+                        <th style="width: 80px;">Age</th>
+                        <th>Row</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
                 <tbody></tbody>
             </table>
         </div>
+
         <h3 class="section-title">Calculated Summary</h3>
         <div class="table-responsive">
             <table id="summaryGridTable" class="subtotal-table">
@@ -72,11 +81,13 @@
                 <tbody></tbody>
             </table>
         </div>
+
         <div class="final-totals-container">
             <div class="total-item"><span class="total-label">Total:</span><span class="total-value">$<span id="displayTotal">0</span></span></div>
             <div class="total-item"><span class="total-label">25% Deposit Due:</span><span class="total-value deposit-value">$<span id="displayDeposit">0</span></span></div>
             <div class="total-item"><span class="total-label">Remaining Balance:</span><span class="total-value">$<span id="displayBalance">0</span></span></div>
         </div>
+
         <div id="deferredSection" style="display:none;">
             <h3 class="section-title deferred-title">Deferred Requests</h3>
             <div class="table-responsive">
@@ -112,48 +123,23 @@
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align:center; font-weight:bold;">Permanent Seating Agreement</p>
             <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
-            
-            <h4>1. Seat Assignment</h4>
-            <p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
-
-            <h4>2. Term</h4>
-            <p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment. At the conclusion of the initial term, the seat assignment shall automatically renew for an additional term, provided the Seat Holder remains in good standing and continues to meet the participation and residency expectations of the synagogue.</p>
-
-            <h4>3. Continued Participation</h4>
-            <p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life. If a Seat Holder relocates their primary residence outside the community or no longer regularly attends synagogue services, the synagogue reserves the right, after appropriate notice and discussion, to review and reassign the seat in the best interest of the community.</p>
-
-            <h4>4. Payment Terms</h4>
-            <p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation. Seat Holders may elect monthly equal installments, quarterly installments, or payment in full at any time. Failure to confirm acceptance and remit the required initial payment within the stated timeframe will result in release of the assigned seat. Specific seat locations within each section will be finalized in a subsequent phase following confirmation and deposit.</p>
-
-            <h4>5. Annual Maintenance Fee</h4>
-            <p>Each permanent seat is subject to an annual maintenance fee of $500 per seat. Members who previously purchased permanent seats in the prior shul will receive three (3) years of credit toward their annual maintenance fees, applied on a per-seat basis, representing a $1,500 savings per seat. This credit applies exclusively toward future maintenance fees. Failure to remain current on maintenance obligations may result in review of seat status following notice.</p>
-
-            <h4>6. Non-Transferability</h4>
-            <p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
-
-            <h4>7. Passing of a Seat Holder</h4>
-            <p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue. Immediate family members who are year-round residents may submit a written request within six (6) months to be considered for reassignment of the seat. Any such reassignment shall be subject to then-current pricing and eligibility standards in effect at that time. If no qualifying request is made within that period, the seat shall be made available for reallocation by the synagogue.</p>
-
-            <h4>8. Future Improvements and Assessments</h4>
-            <p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary. Should that occur, the synagogue leadership may determine that an assessment or contribution is required to support such enhancements, in a manner deemed fair and appropriate for the community at that time. Failure to satisfy such assessments, after appropriate notice and opportunity to address the matter, may result in review of seat status.</p>
-
-            <h4>9. High Holiday Seating</h4>
-            <p>Permanent seat holders will have priority use of their assigned seats during the High Holidays. A High Holiday seating fee, consistent with past practice, will apply. While every effort will be made to accommodate seat holders in their assigned locations, adjustments to seating arrangements may be made from time to time as necessary. By accepting permanent seating, seat holders acknowledge and agree to such reasonable adjustments if required during the High Holidays.</p>
-
-            <h4>10. Governance</h4>
-            <p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
-
+            <h4>1. Seat Assignment</h4><p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein...</p>
+            <h4>2. Term</h4><p>Permanent seating is granted for an initial term of fifteen (15) years...</p>
+            <h4>3. Continued Participation</h4><p>Permanent seating is intended for members who reside year-round...</p>
+            <h4>4. Payment Terms</h4><p>An initial payment of twenty-five percent (25%)...</p>
+            <h4>5. Annual Maintenance Fee</h4><p>Each permanent seat is subject to an annual maintenance fee of $500...</p>
+            <h4>6. Non-Transferability</h4><p>Permanent seats are personal and may not be transferred.</p>
+            <h4>7. Passing of a Seat Holder</h4><p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue...</p>
+            <h4>8. Future Improvements</h4><p>Syngagogue leadership may determine that an assessment is required for enhancements...</p>
+            <h4>9. High Holiday Seating</h4><p>Permanent seat holders will have priority use during the High Holidays...</p>
+            <h4>10. Governance</h4><p>Subject to synagogue policies as adopted or amended.</p>
             <p style="margin-top:20px; font-weight:bold; border-top: 1px solid #eee; padding-top:10px;">By confirming acceptance of the assigned seat(s) and submitting the required payment, the Seat Holder agrees to the terms set forth in this Agreement.</p>
         </div>
-
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
         </div>
-        
-        <label>Type Full Name for Signature:</label>
-        <input type="text" id="typeSignature" placeholder="Enter your full name">
-
+        <label>Type Full Name for Signature:</label><input type="text" id="typeSignature" placeholder="Enter your full name">
         <div class="btn-group">
             <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
             <button type="button" id="submitBtn" class="next-btn" onclick="handleFormSubmission()">Submit Confirmation</button>
@@ -162,14 +148,12 @@
 
     <div id="successPage" class="step">
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
-        
         <div class="no-print" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ffc107;">
             <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                 <input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> 
                 <strong>Include a copy of the Bylaws (Terms) when printing</strong>
             </label>
         </div>
-
         <div id="printArea">
             <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
                 <h3>Larchwood Shul - Permanent Seating Confirmation</h3>
@@ -182,14 +166,13 @@
                 <p><strong>25% Deposit Paid:</strong> $<span id="resDeposit"></span></p>
                 <p><strong>Remaining Balance:</strong> $<span id="resBalance"></span></p>
             </div>
-            <h4>Approved Seating Details:</h4>
+            <h4>Confirmed Seating Details:</h4>
             <div id="resDetails"></div>
             <div id="resDeferredArea" style="display:none;">
                 <h4>Deferred Requests:</h4>
                 <div id="resDeferredDetails" style="color: #666;"></div>
             </div>
             <p style="margin-top: 20px; border-bottom: 1px solid #333; display: inline-block;"><strong>Signature:</strong> <span id="finalSignature"></span></p>
-            
             <div id="printBylaws"><div id="bylawsContent"></div></div>
         </div>
         <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
@@ -198,7 +181,7 @@
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHtoO0SVubuIAvWCUP8Jwg75xY5FjCuYxEILIHlha2N59pWSVQe2CImCehS_7ABU8DwQ/exec";
-    let baseSeats = [], deferredSeats = [], totalVal = 0;
+    let allSeats = [], deferredSeats = [];
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
@@ -212,13 +195,14 @@
             "LS_RR": { section: "Ladies’ Seats – Main Shul", row: "Remaining Rows", price: 5200 },
             "MS_R2": { section: "Men’s Seats – Main Shul", row: "Row 2", price: 10000 }
         };
+
         const seatStr = params.get("seats");
         if(seatStr){
-            const categories = {};
-            seatStr.split(",").forEach(s => {
+            seatStr.split(",").forEach((s, index) => {
                 const [code, name, age, status] = s.split("|");
                 const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
                 const decodedName = decodeURIComponent(name);
+
                 if (status === "DEFERRED") {
                     deferredSeats.push({ section: details.section, name: decodedName, age, row: details.row });
                     document.getElementById("deferredSection").style.display = "block";
@@ -226,44 +210,72 @@
                     tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td>`;
                     document.querySelector("#deferredTable tbody").appendChild(tr);
                 } else {
-                    const p = parseFloat(details.price) || 0;
-                    baseSeats.push({ section: details.section, name: decodedName, age, row: details.row, price: p });
-                    totalVal += p;
-                    const catKey = details.section + " (" + details.row + ")";
-                    if(!categories[catKey]) categories[catKey] = { qty: 0, price: p };
-                    categories[catKey].qty++;
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td><td>$${p.toLocaleString()}</td>`;
-                    document.querySelector("#seatTable tbody").appendChild(tr);
+                    const price = parseFloat(details.price) || 0;
+                    allSeats.push({ id: index, code, section: details.section, name: decodedName, age, row: details.row, price, active: true });
                 }
             });
-            for (let cat in categories) {
-                const tr = document.createElement("tr");
-                const lineTotal = categories[cat].qty * categories[cat].price;
-                tr.innerHTML = `<td>${cat}</td><td>${categories[cat].qty}</td><td>$${categories[cat].price.toLocaleString()}</td><td>$${lineTotal.toLocaleString()}</td>`;
-                document.querySelector("#summaryGridTable tbody").appendChild(tr);
-            }
         }
-        updateTotals();
+        renderSeatTable();
     }
 
-    function updateTotals() {
+    function renderSeatTable() {
+        const tbody = document.querySelector("#seatTable tbody");
+        tbody.innerHTML = "";
+        allSeats.forEach(seat => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="text-align:center;"><input type="checkbox" ${seat.active ? 'checked' : ''} onchange="toggleSeat(${seat.id})"></td>
+                <td>${seat.section}</td>
+                <td><input type="text" class="table-input" value="${seat.name}" oninput="updateSeatData(${seat.id}, 'name', this.value)"></td>
+                <td><input type="number" class="table-input" value="${seat.age}" oninput="updateSeatData(${seat.id}, 'age', this.value)"></td>
+                <td>${seat.row}</td>
+                <td>$${seat.price.toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        calculateTotals();
+    }
+
+    function toggleSeat(id) {
+        const seat = allSeats.find(s => s.id === id);
+        seat.active = !seat.active;
+        calculateTotals();
+    }
+
+    function updateSeatData(id, field, value) {
+        const seat = allSeats.find(s => s.id === id);
+        seat[field] = value;
+    }
+
+    function calculateTotals() {
+        const categories = {};
+        let totalVal = 0;
+
+        allSeats.forEach(seat => {
+            if (seat.active) {
+                totalVal += seat.price;
+                const catKey = seat.section + " (" + seat.row + ")";
+                if(!categories[catKey]) categories[catKey] = { qty: 0, price: seat.price };
+                categories[catKey].qty++;
+            }
+        });
+
+        const summaryTbody = document.querySelector("#summaryGridTable tbody");
+        summaryTbody.innerHTML = "";
+        for (let cat in categories) {
+            const tr = document.createElement("tr");
+            const lineTotal = categories[cat].qty * categories[cat].price;
+            tr.innerHTML = `<td>${cat}</td><td>${categories[cat].qty}</td><td>$${categories[cat].price.toLocaleString()}</td><td>$${lineTotal.toLocaleString()}</td>`;
+            summaryTbody.appendChild(tr);
+        }
+
         const deposit = totalVal * 0.25;
         document.getElementById("displayTotal").innerText = totalVal.toLocaleString();
         document.getElementById("displayDeposit").innerText = deposit.toLocaleString();
         document.getElementById("displayBalance").innerText = (totalVal - deposit).toLocaleString();
-    }
-
-    function toggleBylaws() {
-        const checked = document.getElementById("includeBylaws").checked;
-        const printBox = document.getElementById("printBylaws");
-        if(checked) {
-            printBox.classList.add("show-bylaws");
-            document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML;
-        } else {
-            printBox.classList.remove("show-bylaws");
-            document.getElementById("bylawsContent").innerHTML = "";
-        }
+        
+        // Store for global access
+        window.finalTotal = totalVal;
     }
 
     function nextStep(n){
@@ -276,9 +288,19 @@
         document.getElementById("step"+n).classList.add("active");
         window.scrollTo(0,0);
     }
+    function toggleBylaws() {
+        const checked = document.getElementById("includeBylaws").checked;
+        const printBox = document.getElementById("printBylaws");
+        if(checked) {
+            printBox.classList.add("show-bylaws");
+            document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML;
+        } else {
+            printBox.classList.remove("show-bylaws");
+            document.getElementById("bylawsContent").innerHTML = "";
+        }
+    }
 
     async function handleFormSubmission() {
-        // --- VALIDATION LOGIC ---
         const payOption = document.querySelector('input[name="payment"]:checked');
         const signature = document.getElementById("typeSignature").value.trim();
         const agree1 = document.getElementById("agree1").checked;
@@ -289,28 +311,30 @@
         if(!signature) return alert("Please type your name for the digital signature.");
         
         const btn = document.getElementById("submitBtn");
-        const backBtn = document.getElementById("lastBackBtn");
-        btn.disabled = true; backBtn.disabled = true; btn.innerText = "Processing...";
+        btn.disabled = true; btn.innerText = "Processing...";
+
+        const confirmedSeats = allSeats.filter(s => s.active);
 
         const payload = {
             member: document.getElementById("memberName").innerText,
-            total: totalVal,
+            total: window.finalTotal,
             paymentPlan: payOption.value,
             notes: document.getElementById("notes").value,
             signature: signature,
-            seats: baseSeats,
+            seats: confirmedSeats,
             submissionId: Date.now()
         };
 
-        // Populate Success Details
+        // Populate Success
         document.getElementById("resMember").innerText = payload.member;
         document.getElementById("resDate").innerText = new Date().toLocaleString();
         document.getElementById("resPlan").innerText = payload.paymentPlan;
-        document.getElementById("resTotal").innerText = totalVal.toLocaleString();
-        document.getElementById("resDeposit").innerText = (totalVal * 0.25).toLocaleString();
-        document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
+        document.getElementById("resTotal").innerText = window.finalTotal.toLocaleString();
+        document.getElementById("resDeposit").innerText = (window.finalTotal * 0.25).toLocaleString();
+        document.getElementById("resBalance").innerText = (window.finalTotal * 0.75).toLocaleString();
         document.getElementById("finalSignature").innerText = signature;
-        document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        document.getElementById("resDetails").innerHTML = confirmedSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        
         if (deferredSeats.length > 0) {
             document.getElementById("resDeferredArea").style.display = "block";
             document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
@@ -322,11 +346,10 @@
                 document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
                 document.getElementById("successPage").classList.add("active");
                 window.scrollTo(0,0);
-            }, 800);
+            }, 600);
         } catch (e) {
             document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
             document.getElementById("successPage").classList.add("active");
-            window.scrollTo(0,0);
         }
     }
     loadData();
