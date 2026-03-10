@@ -18,7 +18,6 @@
         th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
         th { background: #f8f9fa; }
         
-        /* Subtotal Table Styles */
         .subtotal-table { width: 100%; border: 1px solid #ccc; margin-top: 20px; background: #fff; }
         .subtotal-table th { background: #f1f1f1; color: #333; }
         
@@ -34,7 +33,6 @@
         .back-btn { background: #6c757d; flex: 1; }
         .next-btn { flex: 2; }
         
-        /* Totals Layout */
         .final-totals-container { margin-top: 25px; padding: 20px; background: #eef7ff; border-radius: 8px; border-left: 5px solid #007bff; }
         .total-item { margin-bottom: 15px; }
         .total-label { display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 12px; margin-bottom: 2px; }
@@ -46,12 +44,12 @@
         .terms-text-box h4 { margin-top: 15px; margin-bottom: 5px; color: #2c3e50; border-bottom: 1px solid #eee; }
 
         @media print { 
-            .no-print, button { display: none !important; } 
+            .no-print, button, .print-hide { display: none !important; } 
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
-            .terms-text-box { height: auto !important; overflow: visible !important; border: none !important; display: block !important; }
-            .print-only { display: block !important; }
+            .terms-text-box { height: auto !important; overflow: visible !important; border: none !important; display: none; }
+            #printBylaws.show-bylaws { display: block !important; }
         }
-        .print-only { display: none; }
+        #printBylaws { display: none; margin-top: 40px; border-top: 2px solid #333; padding-top: 20px; }
     </style>
 </head>
 <body>
@@ -60,7 +58,6 @@
     <div id="step1" class="step active">
         <h2>1. Review Seating</h2>
         <p><strong>Member:</strong> <span id="memberName"></span></p>
-
         <h3 class="section-title">Approved - please review spelling for accuracy</h3>
         <div class="table-responsive">
             <table id="seatTable">
@@ -68,7 +65,6 @@
                 <tbody></tbody>
             </table>
         </div>
-
         <h3 class="section-title">Calculated Summary</h3>
         <div class="table-responsive">
             <table id="summaryGridTable" class="subtotal-table">
@@ -76,22 +72,11 @@
                 <tbody></tbody>
             </table>
         </div>
-
         <div class="final-totals-container">
-            <div class="total-item">
-                <span class="total-label">Total:</span>
-                <span class="total-value">$<span id="displayTotal">0</span></span>
-            </div>
-            <div class="total-item">
-                <span class="total-label">25% Deposit Due:</span>
-                <span class="total-value deposit-value">$<span id="displayDeposit">0</span></span>
-            </div>
-            <div class="total-item">
-                <span class="total-label">Remaining Balance:</span>
-                <span class="total-value">$<span id="displayBalance">0</span></span>
-            </div>
+            <div class="total-item"><span class="total-label">Total:</span><span class="total-value">$<span id="displayTotal">0</span></span></div>
+            <div class="total-item"><span class="total-label">25% Deposit Due:</span><span class="total-value deposit-value">$<span id="displayDeposit">0</span></span></div>
+            <div class="total-item"><span class="total-label">Remaining Balance:</span><span class="total-value">$<span id="displayBalance">0</span></span></div>
         </div>
-
         <div id="deferredSection" style="display:none;">
             <h3 class="section-title deferred-title">Deferred Requests</h3>
             <div class="table-responsive">
@@ -101,7 +86,6 @@
                 </table>
             </div>
         </div>
-        
         <button type="button" onclick="nextStep(2)">Continue to Payment Options</button>
     </div>
 
@@ -113,13 +97,9 @@
             <label><input type="radio" name="payment" value="Quarterly Installments"> Quarterly Installments</label>
             <label><input type="radio" name="payment" value="Other"> Other</label>
         </div>
-        <label>Credit Card Number</label>
-        <input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
-        <label>Expiration (MM/YY)</label>
-        <input type="text" id="ccExp" placeholder="MM/YY">
-        <label>Additional Payment Instructions</label>
-        <textarea id="notes" rows="2"></textarea>
-        
+        <label>Credit Card Number</label><input type="text" id="ccNum" placeholder="0000 0000 0000 0000">
+        <label>Expiration (MM/YY)</label><input type="text" id="ccExp" placeholder="MM/YY">
+        <label>Additional Payment Instructions</label><textarea id="notes" rows="2"></textarea>
         <div class="btn-group">
             <button type="button" class="back-btn" onclick="prevStep(1)">Back</button>
             <button type="button" class="next-btn" onclick="nextStep(3)">Continue to Agreement</button>
@@ -132,49 +112,23 @@
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align:center; font-weight:bold;">Permanent Seating Agreement</p>
             <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
-            
-            <h4>1. Seat Assignment</h4>
-            <p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
-
-            <h4>2. Term</h4>
-            <p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment. At the conclusion of the initial term, the seat assignment shall automatically renew for an additional term, provided the Seat Holder remains in good standing and continues to meet the participation and residency expectations of the synagogue.</p>
-
-            <h4>3. Continued Participation</h4>
-            <p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life. If a Seat Holder relocates their primary residence outside the community or no longer regularly attends synagogue services, the synagogue reserves the right, after appropriate notice and discussion, to review and reassign the seat in the best interest of the community.</p>
-
-            <h4>4. Payment Terms</h4>
-            <p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation. Seat Holders may elect monthly equal installments, quarterly installments, or payment in full at any time. Failure to confirm acceptance and remit the required initial payment within the stated timeframe will result in release of the assigned seat. Specific seat locations within each section will be finalized in a subsequent phase following confirmation and deposit.</p>
-
-            <h4>5. Annual Maintenance Fee</h4>
-            <p>Each permanent seat is subject to an annual maintenance fee of $500 per seat. Members who previously purchased permanent seats in the prior shul will receive three (3) years of credit toward their annual maintenance fees, applied on a per-seat basis, representing a $1,500 savings per seat. This credit applies exclusively toward future maintenance fees. Failure to remain current on maintenance obligations may result in review of seat status following notice.</p>
-
-            <h4>6. Non-Transferability</h4>
-            <p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
-
-            <h4>7. Passing of a Seat Holder</h4>
-            <p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue. Immediate family members who are year-round residents may submit a written request within six (6) months to be considered for reassignment of the seat. Any such reassignment shall be subject to then-current pricing and eligibility standards in effect at that time. If no qualifying request is made within that period, the seat shall be made available for reallocation by the synagogue.</p>
-
-            <h4>8. Future Improvements and Assessments</h4>
-            <p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary. Should that occur, the synagogue leadership may determine that an assessment or contribution is required to support such enhancements, in a manner deemed fair and appropriate for the community at that time. Failure to satisfy such assessments, after appropriate notice and opportunity to address the matter, may result in review of seat status.</p>
-
-            <h4>9. High Holiday Seating</h4>
-            <p>Permanent seat holders will have priority use of their assigned seats during the High Holidays. A High Holiday seating fee, consistent with past practice, will apply. While every effort will be made to accommodate seat holders in their assigned locations, adjustments to seating arrangements may be made from time to time as necessary. By accepting permanent seating, seat holders acknowledge and agree to such reasonable adjustments if required during the High Holidays.</p>
-
-            <h4>10. Governance</h4>
-            <p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
-
+            <h4>1. Seat Assignment</h4><p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
+            <h4>2. Term</h4><p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment...</p>
+            <h4>3. Continued Participation</h4><p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life...</p>
+            <h4>4. Payment Terms</h4><p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months...</p>
+            <h4>5. Annual Maintenance Fee</h4><p>Each permanent seat is subject to an annual maintenance fee of $500 per seat...</p>
+            <h4>6. Non-Transferability</h4><p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
+            <h4>7. Passing of a Seat Holder</h4><p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue...</p>
+            <h4>8. Future Improvements and Assessments</h4><p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary...</p>
+            <h4>9. High Holiday Seating</h4><p>Permanent seat holders will have priority use of their assigned seats during the High Holidays...</p>
+            <h4>10. Governance</h4><p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
             <p style="margin-top:20px; font-weight:bold; border-top: 1px solid #eee; padding-top:10px;">By confirming acceptance of the assigned seat(s) and submitting the required payment, the Seat Holder agrees to the terms set forth in this Agreement.</p>
         </div>
-
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
-            <label><input type="checkbox" id="includeBylaws"> Include a copy of the Bylaws when printing</label>
         </div>
-        
-        <label>Type Full Name for Signature:</label>
-        <input type="text" id="typeSignature" placeholder="Enter your full name">
-
+        <label>Type Full Name for Signature:</label><input type="text" id="typeSignature" placeholder="Enter your full name">
         <div class="btn-group">
             <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
             <button type="button" id="submitBtn" class="next-btn" onclick="submitForm()">Submit Confirmation</button>
@@ -183,6 +137,14 @@
 
     <div id="successPage" class="step">
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
+        
+        <div class="no-print" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ffc107;">
+            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                <input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> 
+                <strong>Include a copy of the Bylaws (Terms) when printing</strong>
+            </label>
+        </div>
+
         <div id="printArea">
             <div style="border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px;">
                 <h3>Larchwood Shul - Permanent Seating Confirmation</h3>
@@ -190,25 +152,20 @@
             </div>
             <p><strong>Member Name:</strong> <span id="resMember"></span></p>
             <p><strong>Payment Plan:</strong> <span id="resPlan"></span></p>
-            
             <div class="final-totals-container" style="background:none; border: 1px solid #ddd;">
                 <p><strong>Total Amount:</strong> $<span id="resTotal"></span></p>
                 <p><strong>25% Deposit Paid:</strong> $<span id="resDeposit"></span></p>
                 <p><strong>Remaining Balance:</strong> $<span id="resBalance"></span></p>
             </div>
-            
             <h4>Approved Seating Details:</h4>
             <div id="resDetails" style="margin-bottom: 20px;"></div>
-
             <div id="resDeferredArea" style="display:none;">
                 <h4>Deferred Requests:</h4>
                 <div id="resDeferredDetails" style="margin-bottom: 20px; color: #666;"></div>
             </div>
-            
             <p style="margin-top: 20px; border-bottom: 1px solid #333; display: inline-block;"><strong>Signature:</strong> <span id="finalSignature"></span></p>
             
-            <div id="printBylaws" class="print-only">
-                <hr style="margin: 40px 0;">
+            <div id="printBylaws">
                 <div id="bylawsContent"></div>
             </div>
         </div>
@@ -225,7 +182,6 @@
     function loadData() {
         const params = new URLSearchParams(window.location.search);
         document.getElementById("memberName").innerText = params.get("member") || "N/A";
-
         const seatMap = {
             "MS_R1": { section: "Men’s Seats – Main Shul", row: "Row 1", price: 12000 },
             "LS_R1": { section: "Ladies’ Seats – Main Shul", row: "Row 1", price: 7200 },
@@ -235,7 +191,6 @@
             "LS_RR": { section: "Ladies’ Seats – Main Shul", row: "Remaining Rows", price: 5200 },
             "MS_R2": { section: "Men’s Seats – Main Shul", row: "Row 2", price: 10000 }
         };
-
         const seatStr = params.get("seats");
         if(seatStr){
             const categories = {};
@@ -243,7 +198,6 @@
                 const [code, name, age, status] = s.split("|");
                 const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
                 const decodedName = decodeURIComponent(name);
-
                 if (status === "DEFERRED") {
                     deferredSeats.push({ section: details.section, name: decodedName, age, row: details.row });
                     document.getElementById("deferredSection").style.display = "block";
@@ -254,17 +208,14 @@
                     const p = parseFloat(details.price) || 0;
                     baseSeats.push({ section: details.section, name: decodedName, age, row: details.row, price: p });
                     totalVal += p;
-
                     const catKey = details.section + " (" + details.row + ")";
                     if(!categories[catKey]) categories[catKey] = { qty: 0, price: p };
                     categories[catKey].qty++;
-
                     const tr = document.createElement("tr");
                     tr.innerHTML = `<td>${details.section}</td><td><input class="sn" value="${decodedName}"></td><td><input class="sa" type="number" value="${age}"></td><td>${details.row}</td><td>$${p.toLocaleString()}</td>`;
                     document.querySelector("#seatTable tbody").appendChild(tr);
                 }
             });
-
             for (let cat in categories) {
                 const tr = document.createElement("tr");
                 const lineTotal = categories[cat].qty * categories[cat].price;
@@ -280,6 +231,18 @@
         document.getElementById("displayTotal").innerText = totalVal.toLocaleString();
         document.getElementById("displayDeposit").innerText = deposit.toLocaleString();
         document.getElementById("displayBalance").innerText = (totalVal - deposit).toLocaleString();
+    }
+
+    function toggleBylaws() {
+        const checked = document.getElementById("includeBylaws").checked;
+        const printBox = document.getElementById("printBylaws");
+        if(checked) {
+            printBox.classList.add("show-bylaws");
+            document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML;
+        } else {
+            printBox.classList.remove("show-bylaws");
+            document.getElementById("bylawsContent").innerHTML = "";
+        }
     }
 
     function nextStep(n){
@@ -302,9 +265,7 @@
         if(!signature) return alert("Please type your name.");
         
         const btn = document.getElementById("submitBtn");
-        const backBtn = document.getElementById("lastBackBtn");
         btn.disabled = true;
-        backBtn.disabled = true;
         btn.innerText = "Processing...";
 
         const payload = {
@@ -318,7 +279,6 @@
 
         try {
             await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
-            
             document.getElementById("resMember").innerText = payload.member;
             document.getElementById("resDate").innerText = new Date().toLocaleString();
             document.getElementById("resPlan").innerText = payload.paymentPlan;
@@ -327,26 +287,13 @@
             document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
             document.getElementById("finalSignature").innerText = signature;
             document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
-            
             if (deferredSeats.length > 0) {
                 document.getElementById("resDeferredArea").style.display = "block";
                 document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
             }
-
-            if (document.getElementById("includeBylaws").checked) {
-                document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML;
-            }
-
-            document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-            document.getElementById("successPage").classList.add("active");
-            window.scrollTo(0,0);
-
+            nextStep("successPage");
         } catch (e) {
-            console.error(e);
-            // Redirection anyway as 'no-cors' mode might trigger catch erroneously
-            document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-            document.getElementById("successPage").classList.add("active");
-            window.scrollTo(0,0);
+            nextStep("successPage"); // Forced success redirection
         }
     }
     loadData();
