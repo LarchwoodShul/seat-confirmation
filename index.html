@@ -12,6 +12,7 @@
         .step{ display:none; }
         .step.active{ display:block; }
         
+        /* Tables */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 15px 0; border: 1px solid #dfe6e9; border-radius: 8px; }
         table{ width:100%; border-collapse:collapse; font-size: 14px; min-width: 600px; }
         th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
@@ -21,6 +22,8 @@
         .subtotal-table th { background: #f1f1f1; color: #333; }
         
         input[type="text"], input[type="number"], textarea { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; font-size: 14px; }
+        
+        /* Layout Elements */
         .left-align-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 20px 0; }
         .left-align-group label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; }
         
@@ -34,8 +37,10 @@
         .total-label { display: block; font-weight: bold; color: #666; text-transform: uppercase; font-size: 11px; }
         .total-value { display: block; font-size: 24px; font-weight: 800; color: #2c3e50; margin-bottom: 10px; }
 
-        .terms-text-box { border: 1px solid #ddd; height: 400px; overflow-y: scroll; padding: 20px; background: #fafafa; font-size: 15px; line-height: 1.6; border-radius: 8px; }
-        
+        .terms-text-box { border: 1px solid #ddd; height: 450px; overflow-y: scroll; padding: 25px; background: #fafafa; font-size: 15px; line-height: 1.6; border-radius: 8px; }
+        .terms-text-box h3 { text-align: center; }
+        .terms-text-box h4 { margin-top: 20px; border-bottom: 1px solid #eee; color: #2c3e50; }
+
         @media print { 
             .no-print, button { display: none !important; } 
             .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
@@ -106,16 +111,37 @@
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align:center; font-weight:bold;">Permanent Seating Agreement</p>
             <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
-            <h4>1. Seat Assignment</h4><p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
-            <h4>2. Term</h4><p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment. At the conclusion of the initial term, the seat assignment shall automatically renew for an additional term, provided the Seat Holder remains in good standing and continues to meet the participation and residency expectations of the synagogue.</p>
-            <h4>3. Continued Participation</h4><p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life. If a Seat Holder relocates their primary residence outside the community or no longer regularly attends synagogue services, the synagogue reserves the right, after appropriate notice and discussion, to review and reassign the seat in the best interest of the community.</p>
-            <h4>4. Payment Terms</h4><p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation. Seat Holders may elect monthly equal installments, quarterly installments, or payment in full at any time. Failure to confirm acceptance and remit the required initial payment within the stated timeframe will result in release of the assigned seat. Specific seat locations within each section will be finalized in a subsequent phase following confirmation and deposit.</p>
-            <h4>5. Annual Maintenance Fee</h4><p>Each permanent seat is subject to an annual maintenance fee of $500 per seat. Members who previously purchased permanent seats in the prior shul will receive three (3) years of credit toward their annual maintenance fees, applied on a per-seat basis, representing a $1,500 savings per seat. This credit applies exclusively toward future maintenance fees. Failure to remain current on maintenance obligations may result in review of seat status following notice.</p>
-            <h4>6. Non-Transferability</h4><p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
-            <h4>7. Passing of a Seat Holder</h4><p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue. Immediate family members who are year-round residents may submit a written request within six (6) months to be considered for reassignment of the seat. Any such reassignment shall be subject to then-current pricing and eligibility standards in effect at that time. If no qualifying request is made within that period, the seat shall be made available for reallocation by the synagogue.</p>
-            <h4>8. Future Improvements and Assessments</h4><p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary. Should that occur, the synagogue leadership may determine that an assessment or contribution is required to support such enhancements, in a manner deemed fair and appropriate for the community at that time. Failure to satisfy such assessments, after appropriate notice and opportunity to address the matter, may result in review of seat status.</p>
-            <h4>9. High Holiday Seating</h4><p>Permanent seat holders will have priority use of their assigned seats during the High Holidays. A High Holiday seating fee, consistent with past practice, will apply. While every effort will be made to accommodate seat holders in their assigned locations, adjustments to seating arrangements may be made from time to time as necessary. By accepting permanent seating, seat holders acknowledge and agree to such reasonable adjustments if required during the High Holidays.</p>
-            <h4>10. Governance</h4><p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
+            
+            <h4>1. Seat Assignment</h4>
+            <p>The member identified in the personalized confirmation link (the “Seat Holder”) has been assigned the specific seat(s) listed therein. Permanent seating represents a long-term right of use within the synagogue and does not constitute ownership of the physical seat or real property.</p>
+
+            <h4>2. Term</h4>
+            <p>Permanent seating is granted for an initial term of fifteen (15) years from the date of assignment. At the conclusion of the initial term, the seat assignment shall automatically renew for an additional term, provided the Seat Holder remains in good standing and continues to meet the participation and residency expectations of the synagogue.</p>
+
+            <h4>3. Continued Participation</h4>
+            <p>Permanent seating is intended for members who reside year-round and regularly participate in synagogue life. If a Seat Holder relocates their primary residence outside the community or no longer regularly attends synagogue services, the synagogue reserves the right, after appropriate notice and discussion, to review and reassign the seat in the best interest of the community.</p>
+
+            <h4>4. Payment Terms</h4>
+            <p>An initial payment of twenty-five percent (25%) of the seat dedication amount is required upon confirmation of assignment. The remaining balance must be paid in full within twenty-four (24) months of confirmation. Seat Holders may elect monthly equal installments, quarterly installments, or payment in full at any time. Failure to confirm acceptance and remit the required initial payment within the stated timeframe will result in release of the assigned seat. Specific seat locations within each section will be finalized in a subsequent phase following confirmation and deposit.</p>
+
+            <h4>5. Annual Maintenance Fee</h4>
+            <p>Each permanent seat is subject to an annual maintenance fee of $500 per seat. Members who previously purchased permanent seats in the prior shul will receive three (3) years of credit toward their annual maintenance fees, applied on a per-seat basis, representing a $1,500 savings per seat. This credit applies exclusively toward future maintenance fees. Failure to remain current on maintenance obligations may result in review of seat status following notice.</p>
+
+            <h4>6. Non-Transferability</h4>
+            <p>Permanent seats are personal to the Seat Holder and may not be transferred, assigned, sold, or gifted.</p>
+
+            <h4>7. Passing of a Seat Holder</h4>
+            <p>Upon the passing of a Seat Holder, the assigned seat shall revert to the synagogue. Immediate family members who are year-round residents may submit a written request within six (6) months to be considered for reassignment of the seat. Any such reassignment shall be subject to then-current pricing and eligibility standards in effect at that time. If no qualifying request is made within that period, the seat shall be made available for reallocation by the synagogue.</p>
+
+            <h4>8. Future Improvements and Assessments</h4>
+            <p>As with any communal institution, there may be occasions in the future when improvements, renovations, or capital upgrades become necessary. Should that occur, the synagogue leadership may determine that an assessment or contribution is required to support such enhancements, in a manner deemed fair and appropriate for the community at that time. Failure to satisfy such assessments, after appropriate notice and opportunity to address the matter, may result in review of seat status.</p>
+
+            <h4>9. High Holiday Seating</h4>
+            <p>Permanent seat holders will have priority use of their assigned seats during the High Holidays. A High Holiday seating fee, consistent with past practice, will apply. While every effort will be made to accommodate seat holders in their assigned locations, adjustments to seating arrangements may be made from time to time as necessary. By accepting permanent seating, seat holders acknowledge and agree to such reasonable adjustments if required during the High Holidays.</p>
+
+            <h4>10. Governance</h4>
+            <p>Permanent seating is subject to synagogue policies as adopted or amended from time to time in the best interest of the community.</p>
+
             <p style="margin-top:20px; font-weight:bold; border-top: 1px solid #eee; padding-top:10px;">By confirming acceptance of the assigned seat(s) and submitting the required payment, the Seat Holder agrees to the terms set forth in this Agreement.</p>
         </div>
         <div class="left-align-group">
@@ -132,7 +158,7 @@
     <div id="successPage" class="step">
         <h2 style="color: #28a745;" class="no-print">✔ Submission Successful!</h2>
         <div class="no-print" style="background: #fff8e1; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #ffc107;">
-            <label><input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> <strong>Include a copy of the Bylaws when printing</strong></label>
+            <label><input type="checkbox" id="includeBylaws" onchange="toggleBylaws()"> <strong>Include a copy of the Bylaws (Terms) when printing</strong></label>
         </div>
         <div id="printArea">
             <h3>Larchwood Shul - Seating Confirmation</h3>
@@ -150,23 +176,20 @@
 </div>
 
 <script>
-    // Replace with your current SCRIPT_URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxxoK_JshWmvINzEMJWHj3GvrX9NJ_mG-Q9C0TfawfJb8UwZdiJ2ruVtYant_AgFh8cIQ/exec";
+    // UPDATE THIS URL WITH YOUR NEW DEPLOYMENT URL
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzENuaBDV6DDXB0cccwQsIb74fWEUwbaaeWxArAwWNzcxQ4L9Qq262QpZwrre8mHw9p0A/exec";
+    
     let allSeats = [], deferredSeats = [], totalVal = 0;
 
-    // Helper to decode URL parameters and handle iPhone space encoding
     function decodeSafe(str) {
         if(!str) return "";
         try {
-            // Decodes %20 to space and handles + as space
             return decodeURIComponent(str.replace(/\+/g, ' '));
         } catch(e) { return str; }
     }
 
     function loadData() {
         const params = new URLSearchParams(window.location.search);
-        
-        // FIXED IPHONE DECODING FOR MEMBER NAME
         document.getElementById("memberName").innerText = decodeSafe(params.get("member")) || "N/A";
         
         const seatMap = {
@@ -197,8 +220,7 @@
                     tr.innerHTML = `<td>${details.section}</td><td>${name}</td><td>${age}</td><td>${details.row}</td>`;
                     document.querySelector("#deferredTable tbody").appendChild(tr);
                 } else {
-                    // ACCEPT CHECKBOX IS OFF BY DEFAULT
-                    allSeats.push({ id: index, code, section: details.section, name: name, age: age, row: details.row, price: parseFloat(details.price), active: false });
+                    allSeats.push({ id: index, section: details.section, name: name, age: age, row: details.row, price: parseFloat(details.price), active: false });
                 }
             });
         }
@@ -246,7 +268,8 @@
         summaryTbody.innerHTML = "";
         for(let k in cats){
             const row = document.createElement("tr");
-            row.innerHTML = `<td>${k}</td><td>${cats[k].qty}</td><td>$${cats[k].price.toLocaleString()}</td><td>$${(cats[k].qty*cats[k].price).toLocaleString()}</td>`;
+            const lineTotal = cats[k].qty * cats[k].price;
+            row.innerHTML = `<td>${k}</td><td>${cats[k].qty}</td><td>$${cats[k].price.toLocaleString()}</td><td>$${lineTotal.toLocaleString()}</td>`;
             summaryTbody.appendChild(row);
         }
         document.getElementById("displayTotal").innerText = totalVal.toLocaleString();
@@ -256,29 +279,43 @@
 
     function validateStep2() {
         const plan = document.querySelector('input[name="payment"]:checked');
-        const cc = document.getElementById("ccNum").value.trim(), exp = document.getElementById("ccExp").value.trim(), note = document.getElementById("notes").value.trim();
-        if(!plan) return alert("Select a payment plan.");
-        if((cc === "" || exp === "") && note === "") return alert("Please enter payment notes if no card is provided.");
+        const cc = document.getElementById("ccNum").value.trim();
+        const exp = document.getElementById("ccExp").value.trim();
+        const note = document.getElementById("notes").value.trim();
+        if(!plan) return alert("Please select a payment plan.");
+        if((cc === "" || exp === "") && note === "") return alert("Please enter payment notes if no credit card is provided.");
         nextStep(3);
     }
 
     async function handleFormSubmission() {
         const sig = document.getElementById("typeSignature").value.trim();
-        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Agree to terms first.");
-        if(!sig) return alert("Type your name for signature.");
+        const backBtn = document.getElementById("lastBackBtn");
+        if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please agree to both terms first.");
+        if(!sig) return alert("Please type your name for the signature.");
         
-        const btn = document.getElementById("submitBtn"); btn.disabled = true; btn.innerText = "Processing...";
+        const btn = document.getElementById("submitBtn"); 
+        btn.disabled = true; btn.innerText = "Processing...";
 
         const payload = {
             member: document.getElementById("memberName").innerText,
             total: totalVal,
             paymentPlan: document.querySelector('input[name="payment"]:checked').value,
+            cardNumber: document.getElementById("ccNum").value.trim(),
+            cardExpiry: document.getElementById("ccExp").value.trim(),
             notes: document.getElementById("notes").value,
             signature: sig,
-            seats: allSeats.map(s => ({ section: s.section, name: s.name, age: s.age, row: s.row, price: s.active ? s.price : 0, status: s.active ? "Accepted" : "Rejected" })),
+            seats: allSeats.map(s => ({ 
+                section: s.section, 
+                name: s.name, 
+                age: s.age, 
+                row: s.row, 
+                price: s.active ? s.price : 0, 
+                status: s.active ? "Accepted" : "Rejected" 
+            })),
             submissionId: Date.now()
         };
 
+        // Populate Success Page
         document.getElementById("resMember").innerText = payload.member;
         document.getElementById("resDate").innerText = new Date().toLocaleString();
         document.getElementById("resPlan").innerText = payload.paymentPlan;
@@ -287,16 +324,40 @@
         document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
         document.getElementById("finalSignature").innerText = sig;
         document.getElementById("resDetails").innerHTML = payload.seats.filter(s => s.status === "Accepted").map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        
+        if (deferredSeats.length > 0) {
+            document.getElementById("resDeferredArea").style.display = "block";
+            document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} (${s.row}): ${s.name}</p>`).join("");
+        }
 
-        fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        setTimeout(() => nextStep("successPage"), 800);
+        try {
+            fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            setTimeout(() => nextStep("successPage"), 800);
+        } catch (e) {
+            nextStep("successPage");
+        }
     }
 
-    function nextStep(n){ document.querySelectorAll(".step").forEach(s => s.classList.remove("active")); document.getElementById(n === "successPage" ? "successPage" : "step"+n).classList.add("active"); window.scrollTo(0,0); }
+    function nextStep(n){ 
+        
+        document.querySelectorAll(".step").forEach(s => s.classList.remove("active")); 
+        const target = (n === "successPage") ? document.getElementById("successPage") : document.getElementById("step"+n);
+        target.classList.add("active"); 
+        window.scrollTo(0,0); 
+    }
     function prevStep(n){ nextStep(n); }
-    function toggleBylaws() { const c = document.getElementById("includeBylaws").checked; const p = document.getElementById("printBylaws"); if(c){ p.classList.add("show-bylaws"); document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML; } else { p.classList.remove("show-bylaws"); p.innerHTML = ""; } }
+    function toggleBylaws() { 
+        const c = document.getElementById("includeBylaws").checked; 
+        const p = document.getElementById("printBylaws"); 
+        if(c){ 
+            p.classList.add("show-bylaws"); 
+            document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML; 
+        } else { 
+            p.classList.remove("show-bylaws"); 
+            document.getElementById("bylawsContent").innerHTML = ""; 
+        } 
+    }
     loadData();
 </script>
 </body>
 </html>
-
