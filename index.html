@@ -17,6 +17,7 @@
         table{ width:100%; border-collapse:collapse; font-size: 14px; min-width: 600px; }
         th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
         th { background: #f8f9fa; }
+        .subtotal-row { background-color: #f1f8ff; font-weight: bold; }
         
         input[type="text"], input[type="number"], textarea, select { width:100%; padding:10px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; margin-top:5px; margin-bottom:10px; font-size: 16px; }
         
@@ -35,15 +36,19 @@
         .summary-value { display: block; font-size: 28px; font-weight: 800; color: #2c3e50; margin-bottom: 15px; }
         .deposit-value { color: #007bff; }
 
-        .terms-text-box { border: 1px solid #ddd; height: 350px; overflow-y: scroll; padding: 20px; background: #fafafa; font-size: 13px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
+        .terms-text-box { border: 1px solid #ddd; height: 450px; overflow-y: scroll; padding: 25px; background: #fafafa; font-size: 15px; line-height: 1.6; margin-bottom: 20px; border-radius: 8px; }
         .terms-text-box h3 { text-align: center; margin-bottom: 5px; }
         .terms-text-box h4 { margin-top: 15px; margin-bottom: 5px; color: #2c3e50; border-bottom: 1px solid #eee; }
 
-        canvas{ border:2px dashed #ccc; width:100%; height:180px; background: #fafafa; cursor: crosshair; touch-action: none; }
-        #finalSignatureImg { border-bottom: 1px solid #333; max-width: 250px; display: block; margin-top: 10px; }
-        
         @media (max-width: 600px) { .container { padding: 15px; } .summary-value { font-size: 22px; } }
-        @media print { .no-print, button, .terms-text-box { display: none; } .container { box-shadow: none; border: none; width: 100%; max-width: 100%; } }
+        
+        @media print { 
+            .no-print, button { display: none !important; } 
+            .container { box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            .terms-text-box { height: auto !important; overflow: visible !important; border: none !important; display: block !important; }
+            .print-only { display: block !important; }
+        }
+        .print-only { display: none; }
     </style>
 </head>
 <body>
@@ -53,10 +58,10 @@
         <h2>1. Review Seating</h2>
         <p><strong>Member:</strong> <span id="memberName"></span></p>
 
-        <h3 class="section-title">Approved Seat Assignments</h3>
+        <h3 class="section-title">Approved - please review spelling for accuracy</h3>
         <div class="table-responsive">
             <table id="seatTable">
-                <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
+                <thead><tr><th>Section / Category</th><th>Occupant Name</th><th>Age</th><th>Price</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -66,14 +71,15 @@
             <span class="summary-value">$<span id="total">0</span></span>
             <span class="summary-label">25% Deposit Due:</span>
             <span class="summary-value deposit-value">$<span id="deposit">0</span></span>
+            <span class="summary-label">Remaining Balance:</span>
+            <span class="summary-value">$<span id="balance">0</span></span>
         </div>
 
         <div id="deferredSection" style="display:none;">
             <h3 class="section-title deferred-title">Deferred Requests</h3>
-            <p style="font-size: 13px; color: #666;">The following requested seats have been deferred at this time:</p>
             <div class="table-responsive">
                 <table id="deferredTable">
-                    <thead><tr><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th></tr></thead>
+                    <thead><tr><th>Section / Category</th><th>Occupant Name</th><th>Age</th></tr></thead>
                     <tbody></tbody>
                 </table>
             </div>
@@ -84,13 +90,6 @@
 
     <div id="step2" class="step">
         <h2>2. Payment Plan Selection</h2>
-        <div class="summary-box" style="font-size: 14px;">
-            <ul style="margin:0; padding-left:20px; line-height: 1.6;">
-                <li>25% deposit required</li>
-                <li>Balance due within 24 months</li>
-                <li>Deposit deadline (14 days)</li>
-            </ul>
-        </div>
         <div class="left-align-group">
             <label><input type="radio" name="payment" value="Pay in Full"> Pay in Full</label>
             <label><input type="radio" name="payment" value="Monthly Installments"> Monthly Installments</label>
@@ -102,7 +101,7 @@
         <label>Expiration (MM/YY)</label>
         <input type="text" id="ccExp" placeholder="MM/YY">
         <label>Additional Payment Instructions</label>
-        <textarea id="notes" rows="2" placeholder="“Additional Payment Instructions”"></textarea>
+        <textarea id="notes" rows="2"></textarea>
         
         <div class="btn-group">
             <button type="button" class="back-btn" onclick="prevStep(1)">Back</button>
@@ -112,7 +111,7 @@
 
     <div id="step3" class="step">
         <h2>3. Final Agreement</h2>
-        <div class="terms-text-box">
+        <div id="termsContainer" class="terms-text-box">
             <h3>LARCHWOOD SHUL</h3>
             <p style="text-align:center; font-weight:bold;">Permanent Seating Agreement</p>
             <p>This Permanent Seating Agreement (“Agreement”) confirms the terms under which permanent seating has been assigned in the new Larchwood Shul sanctuary. This Agreement reflects the shared commitment between the synagogue and its members to build a strong, vibrant, and enduring kehilla.</p>
@@ -153,10 +152,11 @@
         <div class="left-align-group">
             <label><input type="checkbox" id="agree1"> I have read and agree to the Permanent Seating Agreement.</label>
             <label><input type="checkbox" id="agree2"> I understand that seat locations will be finalized after confirmations and deposits are received.</label>
+            <label><input type="checkbox" id="includeBylaws"> Include a copy of the Bylaws when printing</label>
         </div>
-        <p><strong>Digital Signature:</strong></p>
-        <canvas id="signaturePad"></canvas>
-        <button type="button" id="clearBtn" style="background:#6c757d; width:auto; padding:8px 15px; margin-top:5px;" onclick="clearSig()">Clear Signature</button>
+        
+        <label>Type Full Name for Signature:</label>
+        <input type="text" id="typeSignature" placeholder="Enter your full name">
 
         <div class="btn-group">
             <button type="button" id="lastBackBtn" class="back-btn no-print" onclick="prevStep(2)">Back</button>
@@ -173,9 +173,14 @@
             </div>
             <p><strong>Member Name:</strong> <span id="resMember"></span></p>
             <p><strong>Payment Plan:</strong> <span id="resPlan"></span></p>
-            <p><strong>Total Amount:</strong> $<span id="resTotal"></span></p>
             
-            <h4>Approved Seating Details:</h4>
+            <div class="summary-box" style="background: none; border: 1px solid #ddd;">
+                <p><strong>Total Amount:</strong> $<span id="resTotal"></span></p>
+                <p><strong>25% Deposit Paid:</strong> $<span id="resDeposit"></span></p>
+                <p><strong>Remaining Balance:</strong> $<span id="resBalance"></span></p>
+            </div>
+            
+            <h4>Seating Details:</h4>
             <div id="resDetails" style="margin-bottom: 20px;"></div>
 
             <div id="resDeferredArea" style="display:none;">
@@ -183,8 +188,12 @@
                 <div id="resDeferredDetails" style="margin-bottom: 20px; color: #666;"></div>
             </div>
             
-            <p style="margin-top: 20px;"><strong>Digitally Signed:</strong></p>
-            <img id="finalSignatureImg" src="" alt="Signature">
+            <p style="margin-top: 20px; border-bottom: 1px solid #333; display: inline-block;"><strong>Signature:</strong> <span id="finalSignature"></span></p>
+            
+            <div id="printBylaws" class="print-only">
+                <hr style="margin: 40px 0;">
+                <div id="bylawsContent"></div>
+            </div>
         </div>
         <button class="no-print" onclick="window.print()" style="background:#28a745;">Print This Confirmation</button>
     </div>
@@ -201,46 +210,82 @@
         document.getElementById("memberName").innerText = params.get("member") || "N/A";
 
         const seatMap = {
-            "MS_R1": { section: "Men’s Seats – Main Shul", row: "Row 1", price: 12000 },
-            "LS_R1": { section: "Ladies’ Seats – Main Shul", row: "Row 1", price: 7200 },
-            "MM_R1": { section: "Men’s Seats – Midrash", row: "Row 1", price: 7200 },
-            "MS_RR": { section: "Men’s Seats – Main Shul", row: "Remaining Rows", price: 7200 },
-            "MM_RR": { section: "Men’s Seats – Midrash", row: "All Other Rows", price: 5200 },
-            "LS_RR": { section: "Ladies’ Seats – Main Shul", row: "Remaining Rows", price: 5200 },
-            "MS_R2": { section: "Men’s Seats – Main Shul", row: "Row 2", price: 10000 }
+            "MS_R1": { category: "Men’s Seats – Main Shul (Row 1)", price: 12000 },
+            "LS_R1": { category: "Ladies’ Seats – Main Shul (Row 1)", price: 7200 },
+            "MM_R1": { category: "Men’s Seats – Midrash (Row 1)", price: 7200 },
+            "MS_RR": { category: "Men’s Seats – Main Shul (Remaining Rows)", price: 7200 },
+            "MM_RR": { category: "Men’s Seats – Midrash (All Other Rows)", price: 5200 },
+            "LS_RR": { category: "Ladies’ Seats – Main Shul (Remaining Rows)", price: 5200 },
+            "MS_R2": { category: "Men’s Seats – Main Shul (Row 2)", price: 10000 }
         };
 
         const seatStr = params.get("seats");
         if(seatStr){
+            const groupedSeats = {};
+            const groupedDeferred = {};
+
             seatStr.split(",").forEach(s => {
                 const [code, name, age, status] = s.split("|");
-                const details = seatMap[code] || { section: code, row: "N/A", price: 0 };
+                const details = seatMap[code] || { category: code, price: 0 };
                 const decodedName = decodeURIComponent(name);
 
                 if (status === "DEFERRED") {
-                    deferredSeats.push({ section: details.section, name: decodedName, age: age, row: details.row });
-                    document.getElementById("deferredSection").style.display = "block";
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${details.section}</td><td>${decodedName}</td><td>${age}</td><td>${details.row}</td>`;
-                    document.querySelector("#deferredTable tbody").appendChild(tr);
+                    if (!groupedDeferred[details.category]) groupedDeferred[details.category] = [];
+                    groupedDeferred[details.category].push({ name: decodedName, age });
                 } else {
-                    const p = parseFloat(details.price) || 0;
-                    baseSeats.push({ section: details.section, name: decodedName, age: age, row: details.row, price: p });
-                    totalVal += p;
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `<td>${details.section}</td><td><input class="sn" value="${decodedName}"></td><td><input class="sa" type="number" value="${age}"></td><td>${details.row}</td><td>$${p.toLocaleString()}</td>`;
-                    document.querySelector("#seatTable tbody").appendChild(tr);
+                    if (!groupedSeats[details.category]) groupedSeats[details.category] = { items: [], price: details.price };
+                    groupedSeats[details.category].items.push({ name: decodedName, age });
                 }
             });
+
+            // Approved Seats
+            for (let cat in groupedSeats) {
+                const count = groupedSeats[cat].items.length;
+                const catTotal = count * groupedSeats[cat].price;
+                totalVal += catTotal;
+
+                groupedSeats[cat].items.forEach((item, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${idx === 0 ? cat : ""}</td><td><input class="sn" value="${item.name}"></td><td><input class="sa" type="number" value="${item.age}"></td><td>$${groupedSeats[cat].price.toLocaleString()}</td>`;
+                    document.querySelector("#seatTable tbody").appendChild(tr);
+                    baseSeats.push({ category: cat, name: item.name, age: item.age, price: groupedSeats[cat].price });
+                });
+
+                const subRow = document.createElement("tr");
+                subRow.className = "subtotal-row";
+                subRow.innerHTML = `<td colspan="3">${count} ${cat}</td><td>$${catTotal.toLocaleString()}</td>`;
+                document.querySelector("#seatTable tbody").appendChild(subRow);
+            }
+
+            // Deferred Seats
+            for (let cat in groupedDeferred) {
+                document.getElementById("deferredSection").style.display = "block";
+                groupedDeferred[cat].forEach((item, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `<td>${idx === 0 ? cat : ""}</td><td>${item.name}</td><td>${item.age}</td>`;
+                    document.querySelector("#deferredTable tbody").appendChild(tr);
+                    deferredSeats.push({ category: cat, name: item.name, age: item.age });
+                });
+            }
         }
+        
+        updateSummaryDisplay();
+    }
+
+    function updateSummaryDisplay() {
+        const deposit = totalVal * 0.25;
         document.getElementById("total").innerText = totalVal.toLocaleString();
-        document.getElementById("deposit").innerText = (totalVal * 0.25).toLocaleString();
+        document.getElementById("deposit").innerText = deposit.toLocaleString();
+        document.getElementById("balance").innerText = (totalVal - deposit).toLocaleString();
     }
 
     function nextStep(n){
         document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-        document.getElementById("step"+n).classList.add("active");
-        if(n === 3) resizeCanvas();
+        if (n === 'success') {
+            document.getElementById("successPage").classList.add("active");
+        } else {
+            document.getElementById("step"+n).classList.add("active");
+        }
         window.scrollTo(0,0);
     }
 
@@ -250,95 +295,56 @@
         window.scrollTo(0,0);
     }
 
-    const canvas = document.getElementById("signaturePad");
-    const ctx = canvas.getContext("2d");
-    let drawing = false;
-
-    function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        ctx.strokeStyle = "#000";
-        ctx.lineWidth = 3;
-        ctx.lineCap = "round";
-    }
-
-    function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("touchstart", startDrawing);
-    window.addEventListener("mouseup", stopDrawing);
-    window.addEventListener("touchend", stopDrawing);
-    canvas.addEventListener("mousemove", draw);
-    canvas.addEventListener("touchmove", draw);
-
-    function startDrawing(e) { drawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); }
-    function stopDrawing() { drawing = false; ctx.closePath(); }
-    function draw(e) { if (!drawing) return; e.preventDefault(); const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
-    function clearSig() { ctx.clearRect(0,0,canvas.width,canvas.height); }
-
     async function submitForm() {
         const payOption = document.querySelector('input[name="payment"]:checked');
+        const signature = document.getElementById("typeSignature").value;
         if(!payOption) return alert("Please select a payment plan.");
         if(!document.getElementById("agree1").checked || !document.getElementById("agree2").checked) return alert("Please accept the terms.");
+        if(!signature) return alert("Please type your name for the signature.");
         
         const btn = document.getElementById("submitBtn");
-        const backBtn = document.getElementById("lastBackBtn");
-        const clearBtn = document.getElementById("clearBtn");
-        
         btn.disabled = true;
-        backBtn.disabled = true;
-        clearBtn.disabled = true;
         btn.innerText = "Processing...";
 
-        const tempCanvas = document.createElement("canvas");
-        tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;
-        const tempCtx = tempCanvas.getContext("2d");
-        tempCtx.fillStyle = "#ffffff"; tempCtx.fillRect(0,0,tempCanvas.width,tempCanvas.height);
-        tempCtx.drawImage(canvas,0,0);
-        const sigData = tempCanvas.toDataURL("image/jpeg", 0.5);
-
-        const finalSeats = [];
-        document.querySelectorAll("#seatTable tbody tr").forEach((row, i) => {
-            finalSeats.push({ section: baseSeats[i].section, name: row.querySelector(".sn").value, age: row.querySelector(".sa").value, row: baseSeats[i].row, price: baseSeats[i].price });
-        });
-
-        const payload = { member: document.getElementById("memberName").innerText, seats: finalSeats, total: totalVal, paymentPlan: payOption.value, cardNumber: document.getElementById("ccNum").value, cardExpiry: document.getElementById("ccExp").value, notes: document.getElementById("notes").value, signature: sigData, submissionId: Date.now() };
+        const payload = {
+            member: document.getElementById("memberName").innerText,
+            total: totalVal,
+            paymentPlan: payOption.value,
+            cardNumber: document.getElementById("ccNum").value,
+            cardExpiry: document.getElementById("ccExp").value,
+            notes: document.getElementById("notes").value,
+            signature: signature,
+            submissionId: Date.now()
+        };
 
         try {
             await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: {"Content-Type": "text/plain"}, body: JSON.stringify(payload) });
             
-            // Move success page setup inside try block
             document.getElementById("resMember").innerText = payload.member;
             document.getElementById("resDate").innerText = new Date().toLocaleString();
             document.getElementById("resPlan").innerText = payload.paymentPlan;
             document.getElementById("resTotal").innerText = totalVal.toLocaleString();
-            document.getElementById("resDetails").innerHTML = finalSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+            document.getElementById("resDeposit").innerText = (totalVal * 0.25).toLocaleString();
+            document.getElementById("resBalance").innerText = (totalVal * 0.75).toLocaleString();
+            document.getElementById("finalSignature").innerText = signature;
+            
+            document.getElementById("resDetails").innerHTML = baseSeats.map(s => `<p>• ${s.category}: ${s.name} (Age: ${s.age})</p>`).join("");
             
             if (deferredSeats.length > 0) {
                 document.getElementById("resDeferredArea").style.display = "block";
-                document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.section} - ${s.name} (Age: ${s.age})</p>`).join("");
+                document.getElementById("resDeferredDetails").innerHTML = deferredSeats.map(s => `<p>• ${s.category}: ${s.name} (Age: ${s.age})</p>`).join("");
+            }
+
+            if (document.getElementById("includeBylaws").checked) {
+                document.getElementById("bylawsContent").innerHTML = document.getElementById("termsContainer").innerHTML;
+            } else {
+                document.getElementById("bylawsContent").innerHTML = "";
             }
             
-            document.getElementById("finalSignatureImg").src = sigData;
-            
-            // Redirect to success page
-            document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-            document.getElementById("successPage").classList.add("active");
-            window.scrollTo(0,0);
-
+            nextStep("success");
         } catch (e) {
-            // We only alert if something genuinely went wrong, though fetch no-cors usually swallows errors.
-            console.error(e);
             alert("Error sending data. Please check your connection.");
             btn.disabled = false;
-            backBtn.disabled = false;
-            clearBtn.disabled = false;
-            btn.innerText = "Submit Confirmation";
         }
     }
     loadData();
