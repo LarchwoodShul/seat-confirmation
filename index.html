@@ -54,7 +54,7 @@
     <div id="step1" class="step active">
         <h2>1. Review Seating</h2>
         <p><strong>Member:</strong> <span id="memberName"></span></p>
-        <h3 class="section-title"><p>Approved - Please review spelling for accuracy</p><p>Please select each individual seat to confirm</p></h3>
+        <h3 class="section-title"><p>Approved</p><p>Please select each individual seat to confirm</p></h3>
         <div class="table-responsive">
             <table id="seatTable">
                 <thead><tr><th>Accept</th><th>Section</th><th>Occupant Name</th><th>Age</th><th>Row</th><th>Price</th></tr></thead>
@@ -234,9 +234,8 @@
             tr.innerHTML = `
                 <td style="text-align:center;"><input type="checkbox" ${seat.active ? 'checked' : ''} onchange="toggleSeat(${seat.id})"></td>
                 <td>${seat.section}</td>
-                <td><input type="text" value="${seat.name}" oninput="updateSeatData(${seat.id}, 'name', this.value)"></td>
-                <td><input type="number" value="${seat.age}" oninput="updateSeatData(${seat.id}, 'age', this.value)"></td>
-                <td>${seat.row}</td><td>$${seat.price.toLocaleString()}</td>`;
+                <td>${seat.name}</td> <td>${seat.age}</td>  <td>${seat.row}</td>
+                <td>$${seat.price.toLocaleString()}</td>`;
             tbody.appendChild(tr);
         });
         calculateTotals();
@@ -365,5 +364,6 @@
 </script>
 </body>
 </html>
+
 
 
