@@ -6,14 +6,20 @@
     <title>Seat Name Correction</title>
     <style>
         body{ font-family: 'Segoe UI', Arial, sans-serif; background:#f4f7f6; padding:20px; color: #333; }
-        .container{ max-width:800px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .container{ max-width:950px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
         h2{ margin-top:0; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         .table-responsive { width: 100%; overflow-x: auto; margin: 15px 0; border: 1px solid #dfe6e9; border-radius: 8px; }
-        table{ width:100%; border-collapse:collapse; font-size: 14px; }
-        th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; }
+        table{ width:100%; border-collapse:collapse; font-size: 14px; table-layout: auto; } /* Ajustado a auto */
+        th,td{ border:1px solid #dfe6e9; padding:12px; text-align: left; white-space: nowrap; } /* Evita saltos de línea en celdas */
         th { background: #f8f9fa; font-weight: 600; }
-        input[type="text"] { width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; }
-        input[readonly] { background-color: #f1f3f4; color: #5f6368; border: 1px solid #ddd; cursor: not-allowed; }
+        
+        /* Estilo para que los inputs se vean como texto pero mantengan su funcionalidad */
+        input[type="text"] { padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing: border-box; font-size: 14px; min-width: 150px; }
+        input.sec, input.oldName { background-color: transparent; border: none; outline: none; cursor: default; width: auto; min-width: fit-content; }
+        input[readonly] { color: #5f6368; }
+        
+        .newName { width: 100%; border: 1px solid #007bff !important; } /* Resaltar la que sí se edita */
+        
         button{ padding:15px; width:100%; font-size:16px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; font-weight: bold; margin-top: 20px; }
         button:disabled { background: #ccc !important; }
         .success-page { display: none; text-align: center; padding: 40px; }
@@ -71,10 +77,12 @@
                 const parts = s.split("|");
                 if(parts.length >= 2) {
                     const tr = document.createElement("tr");
+                    const sectionText = decodeSafe(parts[0]);
                     const originalName = decodeSafe(parts[1]);
+                    
                     tr.innerHTML = `
-                        <td><input type="text" value="${parts[0]}" readonly class="sec"></td>
-                        <td><input type="text" value="${originalName}" readonly class="oldName"></td>
+                        <td><input type="text" value="${sectionText}" readonly class="sec" size="${sectionText.length + 2}"></td>
+                        <td><input type="text" value="${originalName}" readonly class="oldName" size="${originalName.length + 2}"></td>
                         <td><input type="text" value="${originalName}" class="newName"></td>
                     `;
                     tableBody.appendChild(tr);
@@ -87,29 +95,22 @@
         const btn = document.getElementById("submitBtn");
         const member = document.getElementById("memberNameDisplay").innerText;
         const rows = [];
-
-        // Selecting rows
         const tableRows = document.querySelectorAll("#tableBody tr");
-        if(tableRows.length === 0) {
-            alert("No data to submit.");
-            return;
-        }
+
+        if(tableRows.length === 0) return alert("No data to submit.");
 
         tableRows.forEach(tr => {
             rows.push({
                 section: tr.querySelector(".sec").value,
                 seatName: tr.querySelector(".oldName").value,
-                correctedName: tr.querySelector(".newName").value // Now 'newName' exists
+                correctedName: tr.querySelector(".newName").value
             });
         });
 
         btn.disabled = true;
         btn.innerText = "Processing...";
 
-        const payload = {
-            userName: member,
-            rows: rows
-        };
+        const payload = { userName: member, rows: rows };
 
         try {
             await fetch(SCRIPT_URL, {
@@ -118,7 +119,6 @@
                 body: JSON.stringify(payload)
             });
 
-            // Delay for better UX
             setTimeout(() => {
                 document.getElementById("formStep").style.display = "none";
                 document.getElementById("successPage").style.display = "block";
@@ -126,7 +126,7 @@
 
         } catch (e) {
             console.error(e);
-            alert("An error occurred while submitting. Please try again.");
+            alert("An error occurred while submitting.");
             btn.disabled = false;
             btn.innerText = "Submit";
         }
